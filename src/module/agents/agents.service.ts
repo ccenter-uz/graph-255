@@ -1232,26 +1232,43 @@ export class AgentsService {
     for (const e of sheets) {
       
       if (e[0]) {
-        const findComp = await HolidaysEntity.findOne({
+        const findHoliday = await HolidaysEntity.findOne({
           where: {
             month_name: e[1],
           },
         });
-        if (findComp) {
-          await HolidaysEntity.update(findComp.id, {
+        if (findHoliday) {
+          let obj = {}
+          let num = 1
+          for (let i = 2; i < e.length; i++) {
+              if (e[i]) {
+                obj[num] = e[i]
+                num++;
+              }
+          }
+
+          await HolidaysEntity.update(findHoliday.id, {
             sheet_id: e[0],
             month_name: e[1],
-            holidays: e[2]
+            holidays: JSON.stringify(obj)
           });
-        } 
-        else {
+        } else {
+          
+          let obj = {}
+          let num = 1
+          for (let i = 2; i < e.length; i++) {
+              if (e[i]) {
+                obj[num] = e[i]
+                num++;
+              }
+          }
           await HolidaysEntity.createQueryBuilder()
             .insert()
             .into(HolidaysEntity)
             .values({
               sheet_id: e[0],
               month_name: e[1],
-              holidays: e[2]
+              holidays: JSON.stringify(obj)
             })
             .execute()
               .catch((e) => {
