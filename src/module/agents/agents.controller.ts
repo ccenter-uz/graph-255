@@ -10,7 +10,6 @@ export class AgentsController {
     this.#_service = service;
   }
 
-
   @Get('one')
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
@@ -22,8 +21,6 @@ export class AgentsController {
     return await this.#_service.findOneAgent(login);
   }
 
-
-
   @Get('writeNewGraph-or-update')
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
@@ -32,11 +29,19 @@ export class AgentsController {
     return await this.#_service.writeNewGraph();
   }
 
-  @Get('writeIp-adress-or-update')
+  @Get('write-super-visors')
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   @ApiOkResponse()
-  async writeIpAddress() {
-    return await this.#_service.writeIpAdress();
+  async writeSuperVisors() {
+    return await this.#_service.writeSuperVisors();
+  }
+
+  @Get('write-holidays')
+  @ApiBadRequestResponse()
+  @ApiNotFoundResponse()
+  @ApiOkResponse()
+  async writeHolidays() {
+    return await this.#_service.writeHolidays();
   }
 }

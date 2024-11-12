@@ -12,6 +12,7 @@ import { returnMothData } from 'src/utils/converters';
 import { readSheets } from 'src/utils/google_cloud';
 import { Like } from 'typeorm';
 import { GraphTypes, WorkTypes } from 'src/types';
+import { SupervisersEntity } from 'src/entities/supervisers.entity';
 
 @Injectable()
 export class AgentsService {
@@ -1184,41 +1185,78 @@ export class AgentsService {
   }
 
   // @Cron('0 0 1 * *')
-  async writeIpAdress() {
-    const cutRanges = 'A2:D999';
-    // const sheetId: string = '1BF7Z9CTKdL-RvBwzZTcB4gvOqoviX6fUwHIBmSlG_ow';
-    const rangeName: string = 'ПРЕДПОЧТЕНИЯ21';
+  async writeSuperVisors() { 
+    // writeIpAdress
+    const cutRanges = 'A2:C13';
+    const rangeName: string = 'ПРЕДПОЧТЕНИЯ2';
     const sheets = await readSheets(rangeName, cutRanges);
 
     for (const e of sheets) {
+      
+      if (e[0]) {
+        const findVisor = await SupervisersEntity.findOne({
+          where: {
+            login: e[1],
+          },
+        });
+        if (findVisor) {
+          await SupervisersEntity.update(findVisor.id, {
+            type: e[0],
+            login: e[1],
+            full_name: e[2]
+          });
+        } 
+        else {
+          await SupervisersEntity.createQueryBuilder()
+            .insert()
+            .into(SupervisersEntity)
+            .values({
+              type: e[0],
+              login: e[1],
+              full_name: e[2]
+            })
+            .execute()
+              .catch((e) => {
+                throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
+              });
+        }
+      }
+    }
+  }
+
+  async writeHolidays() {
+    const cutRanges = 'D1:K12';
+    const rangeName: string = 'ПРЕДПОЧТЕНИЯ2';
+    const sheets = await readSheets(rangeName, cutRanges);
+
+    for (const e of sheets) {
+      
       if (e[0]) {
         const findComp = await HolidaysEntity.findOne({
           where: {
-            sheet_id: e[0],
+            month_name: e[1],
           },
         });
-
         if (findComp) {
           await HolidaysEntity.update(findComp.id, {
             sheet_id: e[0],
-            // ip_Adress: e[1],
-            // location: e[2],
-            // atc: e[3],
+            month_name: e[1],
+            holidays: e[2]
           });
-        } else {
+        } 
+        else {
           await HolidaysEntity.createQueryBuilder()
             .insert()
             .into(HolidaysEntity)
             .values({
               sheet_id: e[0],
-              // ip_Adress: e[1],
-              // location: e[2],
-              // atc: e[3],
+              month_name: e[1],
+              holidays: e[2]
             })
             .execute()
-            // .catch((e) => {
-            //   throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
-            // });
+              .catch((e) => {
+                throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
+              });
         }
       }
     }
