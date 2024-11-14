@@ -20,8 +20,6 @@ export class AgentsService {
   constructor() {}
 
   async findOneAgent(login: string) {
-    console.log(login);
-    
     
     const findAgent = await AgentsDateEntity.findOne({
       where: {
@@ -39,7 +37,7 @@ export class AgentsService {
           }
         }
         // create_data: 'DESC',
-      },
+      }
     })
 
     if (!findAgent) {
@@ -1187,7 +1185,7 @@ export class AgentsService {
   // @Cron('0 0 1 * *')
   async writeSuperVisors() { 
     // writeIpAdress
-    const cutRanges = 'A2:C13';
+    const cutRanges = 'A2:C';
     const rangeName: string = 'ПРЕДПОЧТЕНИЯ2';
     const sheets = await readSheets(rangeName, cutRanges);
 
@@ -1277,5 +1275,27 @@ export class AgentsService {
         }
       }
     }
+  }
+
+  async operatorForLogin(login :string) {
+
+      const findAgent = await AgentsDateEntity.findOne({
+          where: {
+            login: login,
+          },
+        });
+
+        return findAgent
+  }
+      
+  async getSupervisor(type :string) {
+
+    const findAgent = await SupervisersEntity.find({
+        where: {
+          type: type, 
+        }
+      });
+
+    return findAgent;
   }
 }

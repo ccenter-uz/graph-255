@@ -10,7 +10,7 @@ export class AgentsController {
     this.#_service = service;
   }
 
-  @Get('one')
+  @Get('one-with-graphic')
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   @ApiOkResponse()
@@ -19,6 +19,17 @@ export class AgentsController {
     @Query('login') login: string
   ) {
     return await this.#_service.findOneAgent(login);
+  }
+
+  @Get('one')
+  @ApiBadRequestResponse()
+  @ApiNotFoundResponse()
+  @ApiOkResponse()
+
+  async findOne(
+    @Query('login') login: string
+  ) {
+    return await this.#_service.operatorForLogin(login);
   }
 
   @Get('writeNewGraph-or-update')
@@ -44,4 +55,16 @@ export class AgentsController {
   async writeHolidays() {
     return await this.#_service.writeHolidays();
   }
+
+
+  @Get('get-supervisor-via-type')
+  @ApiBadRequestResponse()
+  @ApiNotFoundResponse()
+  @ApiOkResponse()
+  async getSupervisor(
+    @Query('type') type: string
+  ) {
+    return await this.#_service.getSupervisor(type);
+  }
+
 }
