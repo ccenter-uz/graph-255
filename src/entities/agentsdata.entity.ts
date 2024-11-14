@@ -7,6 +7,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { GraphMonthEntity } from './graphMoth';
+import { ApplicationEntity } from './applications.entity';
 
 @Entity()
 export class AgentsDateEntity extends BaseEntity {
@@ -57,7 +58,7 @@ export class AgentsDateEntity extends BaseEntity {
 
   @Column({
     type: 'character varying',
-    default:'operator',
+    default: 'operator',
     nullable: true,
   })
   role: string;
@@ -65,6 +66,8 @@ export class AgentsDateEntity extends BaseEntity {
   @OneToMany(() => GraphMonthEntity, (group) => group.agent_id)
   months: GraphMonthEntity[];
 
+  @OneToMany(() => ApplicationEntity, (application) => application.agent_id)
+  applications: ApplicationEntity[];
   @CreateDateColumn({ name: 'created_at' })
   create_data: Date;
 

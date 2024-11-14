@@ -11,35 +11,39 @@ import { GraphMonthEntity } from 'src/entities/graphMoth';
 import { returnMothData } from 'src/utils/converters';
 import { readSheets } from 'src/utils/google_cloud';
 import { Like } from 'typeorm';
-import { GraphTypes, WorkTypes } from 'src/types';
+import { CustomRequest, GraphTypes, WorkTypes } from 'src/types';
 import { SupervisersEntity } from 'src/entities/supervisers.entity';
+import { GetOperatorDto } from './dto/get_operator.dto';
 
 @Injectable()
 export class AgentsService {
   readonly #_cache: Cache;
   constructor() {}
 
-  async findOneAgent(login: string) {
-    
+  async findOneAgent(req: CustomRequest, query: GetOperatorDto) {
+    const { login, month_id } = query;
     const findAgent = await AgentsDateEntity.findOne({
       where: {
-        login:login
+        agent_id: req?.userId,
+        months: {
+          id : month_id == null ?null : month_id
+        }
       },
       relations: {
         months: {
-          days:true
-        }
+          days: true,
+        },
       },
       order: {
         months: {
           days: {
-            the_date :'asc'
-          }
-        }
+            the_date: 'asc',
+          },
+        },
         // create_data: 'DESC',
-      }
-    })
-    
+      },
+    });
+
     function getUzbekistanTime(): string {
       // Опции для форматирования даты
       const options: Intl.DateTimeFormatOptions = {
@@ -48,48 +52,69 @@ export class AgentsService {
         month: '2-digit',
         day: '2-digit',
       };
-    
+
       // Получение текущей даты в Узбекистане
-      const uzbekistanDate = new Intl.DateTimeFormat('ru-RU', options).format(new Date());
-    
+      const uzbekistanDate = new Intl.DateTimeFormat('ru-RU', options).format(
+        new Date(),
+      );
+
       return uzbekistanDate; // Возвращает дату в формате дд.мм.гггг
     }
-    
+
     // Вызов функции и вывод результат
-    
+
     if (!findAgent) {
-      throw new HttpException('Not Found Agent' , HttpStatus.NOT_FOUND)
+      throw new HttpException('Not Found Agent', HttpStatus.NOT_FOUND);
     }
 
-    let data = {}
+    let data = {};
     // if (agentData && agentData.months) {
-      
-    const month = findAgent.months[0];
-    const [theMonthHolidaysInfo] = await this.getHolidayViaId(month.month_number+"")
-    const holidays = Object.values(JSON.parse(theMonthHolidaysInfo.holidays))
-        
-        if (month.days) {
-          for (let j = 0; j < month.days.length; j++) {
-            const day = month.days[j];
-            
-            data = {
-              "id": day.id,
-              "isHoliday": holidays.includes(day?.the_date),
-              "isMustOffday": false,
-              "isNight": day?.work_time === "20-08",
-              "isOrder": day?.work_type === WorkTypes.Smen,
-              "isToday": getUzbekistanTime() === day?.the_date,
-              "isWorkDay": day.at_work === GraphTypes.Work,
-              "label": new Date(day.the_day_Format_Date).getDate()
-            }
 
-          }
-        }
-      
-     return data;
+    const month = findAgent.months[0];
+    const [theMonthHolidaysInfo] = await this.getHolidayViaId(
+      month.month_number + '',
+    );
+    const holidays = Object.values(JSON.parse(theMonthHolidaysInfo.holidays));
+
+    if (month.days) {
+      for (let j = 0; j < month.days.length; j++) {
+        const day = month.days[j];
+
+        data = {
+          id: day.id,
+          isHoliday: holidays.includes(day?.the_date),
+          isMustOffday: false,
+          isNight: day?.work_time === '20-08',
+          isOrder: day?.work_type === WorkTypes.Smen,
+          isToday: getUzbekistanTime() === day?.the_date,
+          isWorkDay: day.at_work === GraphTypes.Work,
+          label: new Date(day.the_day_Format_Date).getDate(),
+        };
+        console.log(data);
+      }
+    }
+
+    return data;
   }
 
 
+  async findOneAgentDataMoths(req: CustomRequest) {
+    const findAgent = await AgentsDateEntity.findOne({
+      where: {
+        agent_id: req?.userId,
+      },
+      relations: {
+        months: true,
+      },
+      order: {
+        months: {
+
+          create_data: 'DESC',
+        },
+      },
+    });
+    return findAgent
+  }
 
   @Cron('0 0 20 * * *')
   async writeNewGraphlastMonth() {
@@ -1225,14 +1250,13 @@ export class AgentsService {
   }
 
   // @Cron('0 0 1 * *')
-  async writeSuperVisors() { 
+  async writeSuperVisors() {
     // writeIpAdress
     const cutRanges = 'A2:C';
     const rangeName: string = 'ПРЕДПОЧТЕНИЯ2';
     const sheets = await readSheets(rangeName, cutRanges);
 
     for (const e of sheets) {
-      
       if (e[0]) {
         const findVisor = await SupervisersEntity.findOne({
           where: {
@@ -1243,22 +1267,21 @@ export class AgentsService {
           await SupervisersEntity.update(findVisor.id, {
             type: e[0],
             login: e[1],
-            full_name: e[2]
+            full_name: e[2],
           });
-        } 
-        else {
+        } else {
           await SupervisersEntity.createQueryBuilder()
             .insert()
             .into(SupervisersEntity)
             .values({
               type: e[0],
               login: e[1],
-              full_name: e[2]
+              full_name: e[2],
             })
             .execute()
-              .catch((e) => {
-                throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
-              });
+            .catch((e) => {
+              throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
+            });
         }
       }
     }
@@ -1270,7 +1293,6 @@ export class AgentsService {
     const sheets = await readSheets(rangeName, cutRanges);
 
     for (const e of sheets) {
-      
       if (e[0]) {
         const findHoliday = await HolidaysEntity.findOne({
           where: {
@@ -1278,29 +1300,28 @@ export class AgentsService {
           },
         });
         if (findHoliday) {
-          let obj = {}
-          let num = 1
+          let obj = {};
+          let num = 1;
           for (let i = 2; i < e.length; i++) {
-              if (e[i]) {
-                obj[num] = e[i]
-                num++;
-              }
+            if (e[i]) {
+              obj[num] = e[i];
+              num++;
+            }
           }
 
           await HolidaysEntity.update(findHoliday.id, {
             sheet_id: e[0],
             month_name: e[1],
-            holidays: JSON.stringify(obj)
+            holidays: JSON.stringify(obj),
           });
         } else {
-          
-          let obj = {}
-          let num = 1
+          let obj = {};
+          let num = 1;
           for (let i = 2; i < e.length; i++) {
-              if (e[i]) {
-                obj[num] = e[i]
-                num++;
-              }
+            if (e[i]) {
+              obj[num] = e[i];
+              num++;
+            }
           }
           await HolidaysEntity.createQueryBuilder()
             .insert()
@@ -1308,47 +1329,47 @@ export class AgentsService {
             .values({
               sheet_id: e[0],
               month_name: e[1],
-              holidays: JSON.stringify(obj)
+              holidays: JSON.stringify(obj),
             })
             .execute()
-              .catch((e) => {
-                throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
-              });
+            .catch((e) => {
+              throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
+            });
         }
       }
     }
   }
 
-  async operatorForLogin(login :string) {
-
-      const findAgent = await AgentsDateEntity.findOne({
-          where: {
-            login: login,
-          },
-        });
-
-        return findAgent
-  }
-      
-  async getSupervisor(type :string) {
-
-    const findAgent = await SupervisersEntity.find({
-        where: {
-          type: type, 
-        }
-      });
+  async operatorForLogin(login: string) {
+    const findAgent = await AgentsDateEntity.findOne({
+      where: {
+        login: login,
+      },
+    });
 
     return findAgent;
   }
 
-  async getHolidayViaId(id :string) {
+  async getSupervisor(type: string) {
+    const findAgent = await SupervisersEntity.find({
+      where: {
+        type: type,
+      },
+    });
 
+    return findAgent;
+  }
+
+  async getHolidayViaId(id: string) {
     const findHoliday = await HolidaysEntity.find({
-        where: {
-          sheet_id: id, 
-        }
-      });
+      where: {
+        sheet_id: id,
+      },
+    });
 
+    if (!findHoliday) {
+      throw new HttpException('Not Found Holidays', HttpStatus.NOT_FOUND);
+    }
     return findHoliday;
   }
 }

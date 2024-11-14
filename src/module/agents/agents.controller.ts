@@ -1,6 +1,25 @@
-import { Body, Controller , Get, HttpCode, HttpStatus, Post, Query ,Patch ,Param ,} from "@nestjs/common";
-import { ApiBadRequestResponse, ApiBody, ApiNotFoundResponse, ApiOkResponse, ApiTags } from "@nestjs/swagger";
-import { AgentsService } from "./agents.service";
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Post,
+  Query,
+  Patch,
+  Param,
+  Req,
+} from '@nestjs/common';
+import {
+  ApiBadRequestResponse,
+  ApiBody,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiTags,
+} from '@nestjs/swagger';
+import { AgentsService } from './agents.service';
+import { GetOperatorDto } from './dto/get_operator.dto';
+import { CustomRequest } from 'src/types';
 
 @Controller('agents')
 @ApiTags('agents')
@@ -14,21 +33,28 @@ export class AgentsController {
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   @ApiOkResponse()
-
   async findOneAgent(
-    @Query('login') login: string
+    @Req() req: CustomRequest,
+    @Query() query: GetOperatorDto,
   ) {
-    return await this.#_service.findOneAgent(login);
+    return await this.#_service.findOneAgent(req, query);
+  }
+
+  @Get('one-data-months')
+  @ApiBadRequestResponse()
+  @ApiNotFoundResponse()
+  @ApiOkResponse()
+  async findOneAgentDataMoths(
+    @Req() req: CustomRequest,
+  ) {
+    return await this.#_service.findOneAgentDataMoths(req);
   }
 
   @Get('one')
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   @ApiOkResponse()
-
-  async findOne(
-    @Query('login') login: string
-  ) {
+  async findOne(@Query('login') login: string) {
     return await this.#_service.operatorForLogin(login);
   }
 
@@ -56,14 +82,11 @@ export class AgentsController {
     return await this.#_service.writeHolidays();
   }
 
-
   @Get('get-supervisor-via-type')
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   @ApiOkResponse()
-  async getSupervisor(
-    @Query('type') type: string
-  ) {
+  async getSupervisor(@Query('type') type: string) {
     return await this.#_service.getSupervisor(type);
   }
 
@@ -71,10 +94,7 @@ export class AgentsController {
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   @ApiOkResponse()
-  async getHolidayViaId(
-    @Query('month_id') month_id: string
-  ) {
+  async getHolidayViaId(@Query('month_id') month_id: string) {
     return await this.#_service.getHolidayViaId(month_id);
   }
-  
 }

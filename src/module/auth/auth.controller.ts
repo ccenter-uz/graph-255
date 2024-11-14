@@ -19,11 +19,8 @@ import {
   ApiOkResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import {
-  SingInUserDto,
-} from './dto/sign_in-user.dto';
+import { SingInUserDto } from './dto/sign_in-user.dto';
 import { CustomRequest } from 'src/types';
-
 
 @Controller('Auth')
 @ApiTags('Auth')

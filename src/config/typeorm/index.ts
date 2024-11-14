@@ -1,11 +1,11 @@
 import * as dotenv from 'dotenv';
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
-import { UsersEntity } from 'src/entities/users.entity';
 import { SupervisersEntity } from 'src/entities/supervisers.entity';
 import { GraphMonthEntity } from 'src/entities/graphMoth';
 import { GraphDaysEntity } from 'src/entities/graphDays';
 import { HolidaysEntity } from 'src/entities/holidays.entity';
 import { AgentsDateEntity } from 'src/entities/agentsdata.entity';
+import { ApplicationEntity } from 'src/entities/applications.entity';
 
 dotenv.config();
 
@@ -17,12 +17,12 @@ export const connectDb: TypeOrmModuleOptions = {
   username: process.env.DB_USERNAME,
   database: process.env.DATABASE,
   entities: [
-    UsersEntity,
     AgentsDateEntity,
     SupervisersEntity,
     GraphMonthEntity,
     GraphDaysEntity,
     HolidaysEntity,
+    ApplicationEntity,
   ],
   autoLoadEntities: true,
   synchronize: true,

@@ -45,7 +45,7 @@ export class ErrorHandle implements ExceptionFilter {
 
     response.status(status).json({
       statusCode: status,
-      ...message,
+      message,
     });
   }
 }
