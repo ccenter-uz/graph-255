@@ -39,12 +39,54 @@ export class AgentsService {
         // create_data: 'DESC',
       }
     })
-
+    
+    function getUzbekistanTime(): string {
+      // Опции для форматирования даты
+      const options: Intl.DateTimeFormatOptions = {
+        timeZone: 'Asia/Tashkent',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+      };
+    
+      // Получение текущей даты в Узбекистане
+      const uzbekistanDate = new Intl.DateTimeFormat('ru-RU', options).format(new Date());
+    
+      return uzbekistanDate; // Возвращает дату в формате дд.мм.гггг
+    }
+    
+    // Вызов функции и вывод результат
+    
     if (!findAgent) {
       throw new HttpException('Not Found Agent' , HttpStatus.NOT_FOUND)
     }
-    
-    return findAgent;
+
+    let data = {}
+    // if (agentData && agentData.months) {
+      
+    const month = findAgent.months[0];
+    const [theMonthHolidaysInfo] = await this.getHolidayViaId(month.month_number+"")
+    const holidays = Object.values(JSON.parse(theMonthHolidaysInfo.holidays))
+        
+        if (month.days) {
+          for (let j = 0; j < month.days.length; j++) {
+            const day = month.days[j];
+            
+            data = {
+              "id": day.id,
+              "isHoliday": holidays.includes(day?.the_date),
+              "isMustOffday": false,
+              "isNight": day?.work_time === "20-08",
+              "isOrder": day?.work_type === WorkTypes.Smen,
+              "isToday": getUzbekistanTime() === day?.the_date,
+              "isWorkDay": day.at_work === GraphTypes.Work,
+              "label": new Date(day.the_day_Format_Date).getDate()
+            }
+
+          }
+        }
+      
+     return data;
   }
 
 
@@ -1297,5 +1339,16 @@ export class AgentsService {
       });
 
     return findAgent;
+  }
+
+  async getHolidayViaId(id :string) {
+
+    const findHoliday = await HolidaysEntity.find({
+        where: {
+          sheet_id: id, 
+        }
+      });
+
+    return findHoliday;
   }
 }

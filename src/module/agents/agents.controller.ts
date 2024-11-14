@@ -67,4 +67,14 @@ export class AgentsController {
     return await this.#_service.getSupervisor(type);
   }
 
+  @Get('get-holiday-via-id')
+  @ApiBadRequestResponse()
+  @ApiNotFoundResponse()
+  @ApiOkResponse()
+  async getHolidayViaId(
+    @Query('month_id') month_id: string
+  ) {
+    return await this.#_service.getHolidayViaId(month_id);
+  }
+  
 }
