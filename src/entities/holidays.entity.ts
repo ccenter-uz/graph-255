@@ -29,7 +29,7 @@ export class HolidaysEntity extends BaseEntity {
 
   @Column({
     type: 'json',
-    // nullable: true,
+    nullable: true,
   })
   holidays: string;
 

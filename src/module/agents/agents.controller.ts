@@ -10,8 +10,7 @@ export class AgentsController {
     this.#_service = service;
   }
 
-
-  @Get('one')
+  @Get('one-with-graphic')
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   @ApiOkResponse()
@@ -22,7 +21,16 @@ export class AgentsController {
     return await this.#_service.findOneAgent(login);
   }
 
+  @Get('one')
+  @ApiBadRequestResponse()
+  @ApiNotFoundResponse()
+  @ApiOkResponse()
 
+  async findOne(
+    @Query('login') login: string
+  ) {
+    return await this.#_service.operatorForLogin(login);
+  }
 
   @Get('writeNewGraph-or-update')
   @ApiBadRequestResponse()
@@ -32,11 +40,41 @@ export class AgentsController {
     return await this.#_service.writeNewGraph();
   }
 
-  @Get('writeIp-adress-or-update')
+  @Get('write-super-visors')
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   @ApiOkResponse()
-  async writeIpAddress() {
-    return await this.#_service.writeIpAdress();
+  async writeSuperVisors() {
+    return await this.#_service.writeSuperVisors();
   }
+
+  @Get('write-holidays')
+  @ApiBadRequestResponse()
+  @ApiNotFoundResponse()
+  @ApiOkResponse()
+  async writeHolidays() {
+    return await this.#_service.writeHolidays();
+  }
+
+
+  @Get('get-supervisor-via-type')
+  @ApiBadRequestResponse()
+  @ApiNotFoundResponse()
+  @ApiOkResponse()
+  async getSupervisor(
+    @Query('type') type: string
+  ) {
+    return await this.#_service.getSupervisor(type);
+  }
+
+  @Get('get-holiday-via-id')
+  @ApiBadRequestResponse()
+  @ApiNotFoundResponse()
+  @ApiOkResponse()
+  async getHolidayViaId(
+    @Query('month_id') month_id: string
+  ) {
+    return await this.#_service.getHolidayViaId(month_id);
+  }
+  
 }
