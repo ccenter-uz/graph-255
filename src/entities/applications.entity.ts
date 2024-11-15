@@ -18,11 +18,6 @@ export class ApplicationEntity extends BaseEntity {
   offDays: string[];
 
   @Column({
-    type: 'character varying',
-  })
-  full_name: string;
-
-  @Column({
     type: 'jsonb',
   })
   daysOfMonth: Array<{

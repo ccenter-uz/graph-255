@@ -11,9 +11,10 @@ import { GraphMonthEntity } from 'src/entities/graphMoth';
 import { returnMothData } from 'src/utils/converters';
 import { readSheets } from 'src/utils/google_cloud';
 import { Like } from 'typeorm';
-import { CustomRequest, GraphTypes, WorkTypes } from 'src/types';
+import { CustomRequest, GraphTypes, WorkTime, WorkTypes } from 'src/types';
 import { SupervisersEntity } from 'src/entities/supervisers.entity';
 import { GetOperatorDto } from './dto/get_operator.dto';
+import { getUzbekistanTime } from 'src/utils/formatter';
 
 @Injectable()
 export class AgentsService {
@@ -26,7 +27,7 @@ export class AgentsService {
       where: {
         agent_id: req?.userId,
         months: {
-          id : month_id == null ?null : month_id
+          id : month_id == 'null' ? 'null' : month_id
         }
       },
       relations: {
@@ -44,23 +45,6 @@ export class AgentsService {
       },
     });
 
-    function getUzbekistanTime(): string {
-      // Опции для форматирования даты
-      const options: Intl.DateTimeFormatOptions = {
-        timeZone: 'Asia/Tashkent',
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-      };
-
-      // Получение текущей даты в Узбекистане
-      const uzbekistanDate = new Intl.DateTimeFormat('ru-RU', options).format(
-        new Date(),
-      );
-
-      return uzbekistanDate; // Возвращает дату в формате дд.мм.гггг
-    }
-
     // Вызов функции и вывод результат
 
     if (!findAgent) {
@@ -68,7 +52,7 @@ export class AgentsService {
     }
 
     let data = {};
-    // if (agentData && agentData.months) {
+    let days = [];
 
     const month = findAgent.months[0];
     const [theMonthHolidaysInfo] = await this.getHolidayViaId(
@@ -84,21 +68,23 @@ export class AgentsService {
           id: day.id,
           isHoliday: holidays.includes(day?.the_date),
           isMustOffday: false,
-          isNight: day?.work_time === '20-08',
+          isNight: day?.work_time === WorkTime.night,
           isOrder: day?.work_type === WorkTypes.Smen,
-          isToday: getUzbekistanTime() === day?.the_date,
+          isToday: await getUzbekistanTime() === day?.the_date,
           isWorkDay: day.at_work === GraphTypes.Work,
           label: new Date(day.the_day_Format_Date).getDate(),
         };
-        console.log(data);
+
+        days.push(data)
       }
     }
+    month.days = days;
 
-    return data;
+    return findAgent;
   }
 
 
-  async findOneAgentDataMoths(req: CustomRequest) {
+  async findOneAgentDataMonths(req: CustomRequest) {
     const findAgent = await AgentsDateEntity.findOne({
       where: {
         agent_id: req?.userId,

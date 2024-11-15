@@ -44,10 +44,10 @@ export class AgentsController {
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   @ApiOkResponse()
-  async findOneAgentDataMoths(
+  async findOneAgentDataMonths(
     @Req() req: CustomRequest,
   ) {
-    return await this.#_service.findOneAgentDataMoths(req);
+    return await this.#_service.findOneAgentDataMonths(req);
   }
 
   @Get('one')
