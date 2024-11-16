@@ -1,33 +1,96 @@
-import { Controller, Get, Post, Put, Delete, Body, Param } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Headers,
+  HttpCode,
+  HttpStatus,
+  Param,
+  Patch,
+  Post,
+  Query,
+  UploadedFiles,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
+import {
+  ApiBadRequestResponse,
+  ApiBearerAuth,
+  ApiBody,
+  ApiConsumes,
+  ApiCreatedResponse,
+  ApiHeader,
+  ApiNoContentResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
 import { ApplicationService } from './application.service';
-import { ApplicationEntity } from 'src/entities/applications.entity';
+import { CreateApplicationSwaggerBodyDto, CreateApplicationDto  } from './dto/create_application.dto';
+import { UpdateApplicationSwaggerBodyDto, UpdateApplicationDto  } from './dto/update_application.dto';
+import { jwtGuard } from '../auth/guards/jwt.guard';
+import { GetApplicationDto } from './dto/get_application.dto';
 
-@Controller('applications')
+@Controller('Application')
+@ApiTags('Application')
+@ApiBearerAuth('JWT-auth')
 export class ApplicationController {
-  constructor(private readonly applicationService: ApplicationService) {}
-
-  @Get()
-  findAll() {
-    return this.applicationService.findAll();
+  readonly #_service: ApplicationService;
+  constructor(service: ApplicationService) {
+    this.#_service = service;
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.applicationService.findOne(id);
+  @Get('/all')
+  @ApiBadRequestResponse()
+  @ApiNotFoundResponse()
+  @ApiOkResponse()
+  async findall(@Query() query: GetApplicationDto ) {
+    return await this.#_service.findAll(query);
   }
 
-  @Post()
-  create(@Body() applicationData: Partial<ApplicationEntity>) {
-    return this.applicationService.create(applicationData);
+  @Get('/one/:id')
+  @ApiBadRequestResponse()
+  @ApiNotFoundResponse()
+  @ApiOkResponse()
+  async findOne(@Param('id') id: string) {
+    return await this.#_service.findOne(id);
   }
 
-  @Put(':id')
-  update(@Param('id') id: string, @Body() applicationData: Partial<ApplicationEntity>) {
-    return this.applicationService.update(id, applicationData);
+  // @UseGuards(jwtGuard)
+  @Post('create')
+  @HttpCode(HttpStatus.CREATED)
+  @ApiBody({ type: CreateApplicationSwaggerBodyDto })
+  @ApiOperation({ description: 'Create Product with role' })
+  @ApiCreatedResponse()
+  @ApiBadRequestResponse()
+  @ApiNotFoundResponse()
+  async create(@Body() createProductDto: CreateApplicationDto) {
+    return await this.#_service.create(createProductDto);
   }
 
-  @Delete(':id')
-  delete(@Param('id') id: string) {
-    return this.applicationService.delete(id);
+  // @UseGuards(jwtGuard)
+  @Patch('/update/:id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiBody({ type: UpdateApplicationSwaggerBodyDto })
+  @ApiOperation({ summary: 'Update with role' })
+  @ApiBadRequestResponse()
+  @ApiNotFoundResponse()
+  async update(
+    @Param('id') id: string,
+    @Body() updateProductDto: UpdateApplicationDto,
+  ) {
+    await this.#_service.update(id, updateProductDto);
+  }
+
+  // @UseGuards(jwtGuard)
+  @Delete('/delete/:id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiBadRequestResponse()
+  @ApiNotFoundResponse()
+  @ApiNoContentResponse()
+  async remove(@Param('id') id: string): Promise<void> {
+    await this.#_service.delete(id);
   }
 }

@@ -1,87 +1,86 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
-    IsString,
-    IsNotEmpty,
-    MaxLength,
-    IsUUID,
-    IsBoolean,
-    IsDateString,
-  } from 'class-validator';
+  IsString,
+  IsUUID,
+  IsOptional,
+  IsBoolean,
+  IsDateString,
+} from 'class-validator';
 
-  export class CreateApplicationDto {
-    @IsString()
-    id: string;
-  
-    @IsString()
-    workingHours: string;
-  
-    @IsString()
-    offDays: string;
-  
-    @IsString()
-    daysOfMonth: string;
-  
-    @IsString()
-    description: string;
-  
-    @IsString()
-    agentIdAgentId: string;
-  }
+export class UpdateApplicationDto {
+  @IsString()
+  id: string;
 
-  export class CreateApplicationSwaggerBodyDto {
-    @ApiProperty({
-        type: 'string',
-        required: true,
-        example: 'string',
-      })
-      @IsUUID()
-      @IsNotEmpty()
-      id?: string;
-    
-      @ApiProperty({
-        type: 'string',
-        required: true,
-        example: 'string',
-      })
-      @IsString()
-      @IsNotEmpty()
-      workingHours?: string;
-    
-      @ApiProperty({
-        type: 'string',
-        required: true,
-        example: true,
-      })
-      @IsBoolean()
-      @IsNotEmpty()
-      offDays?: string;
-    
-      @ApiProperty({
-        type: 'string',
-        required: true,
-        example: 'test',
-      })
-      @IsString()
-      @IsNotEmpty()
-      daysOfMonth?: string;
-    
-      @ApiProperty({
-        type: 'string',
-        format: 'date',
-        required: true,
-        example: 'test',
-      })
-      @IsDateString()
-      @IsNotEmpty()
-      description?: string;
-    
-      @ApiProperty({
-        type: 'string',
-        format: 'date',
-        required: true,
-        example: 'test',
-      })
-      @IsDateString()
-      @IsNotEmpty()
-      agentIdAgentId?: string;
-  }
+  @IsString()
+  workingHours: string;
+
+  @IsString()
+  offDays: string;
+
+  @IsString()
+  daysOfMonth: string;
+
+  @IsString()
+  description: string;
+
+  @IsString()
+  agentIdAgentId: string;
+}
+
+export class UpdateApplicationSwaggerBodyDto {
+  @ApiProperty({
+    type: 'string',
+    required: false,
+    example: '55cc8c2d-34c1-4ca3-88e0-7b1295875642',
+  })
+  @IsUUID()
+  @IsOptional()
+  id?: string;
+
+  @ApiProperty({
+    type: 'string',
+    required: false,
+    example: '123000',
+  })
+  @IsString()
+  @IsOptional()
+  workingHours?: string;
+
+  @ApiProperty({
+    type: 'boolean',
+    required: false,
+    example: true,
+  })
+  @IsBoolean()
+  @IsOptional()
+  offDays?: boolean;
+
+  @ApiProperty({
+    type: 'string',
+    required: false,
+    example: 'yaxshi odamdir',
+  })
+  @IsString()
+  @IsOptional()
+  daysOfMonth?: string;
+
+  @ApiProperty({
+    type: 'string',
+    format: 'date',
+    required: false,
+    example: '2023-01-01',
+  })
+  @IsDateString()
+  @IsOptional()
+  description?: string;
+
+  @ApiProperty({
+    type: 'string',
+    format: 'date',
+    required: false,
+    example: '2023-01-01',
+  })
+  @IsDateString()
+  @IsOptional()
+  agentIdAgentId?: string;
+}
