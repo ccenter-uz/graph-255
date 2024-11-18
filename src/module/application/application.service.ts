@@ -5,6 +5,7 @@ import { UpdateApplicationDto } from './dto/update_application.dto';
 import { DeleteResult, InsertResult, UpdateResult } from 'typeorm';
 import { ApplicationEntity } from 'src/entities/applications.entity';
 import { GetApplicationDto } from './dto/get_application.dto';
+import { AgentsDateEntity } from 'src/entities/agentsdata.entity';
 
 @Injectable()
 export class ApplicationService {
@@ -19,11 +20,11 @@ export class ApplicationService {
 
       const [results, total] = await ApplicationEntity.findAndCount({
         relations: {
-          id: true,
+          agent_id: true,
         },
-        order: {
-          create_data: 'desc',
-        },
+        // order: {
+          
+        // },
         skip: offset,
         take: pageSize,
       }).catch((e) => {
@@ -78,13 +79,11 @@ export class ApplicationService {
   async create(body: CreateApplicationDto) {
     const methodName = this.create;
     try {
-      const findAgent = await ApplicationEntity.findOne({
+      const findAgent = await AgentsDateEntity.findOne({
         where: {
-          id: body.id,
+          agent_id: body.agentId,
         },
-      }).catch(() => {
-        throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
-      });
+      }) 
 
       if (!findAgent) {
         this.logger.debug(`Method: ${methodName} - User not found: `, findAgent);
@@ -99,13 +98,12 @@ export class ApplicationService {
           offDays: body.offDays,
           daysOfMonth: body.daysOfMonth,
           description: body.description,
-          agent_id: findAgent,
+          agent_id: {
+            agent_id: body.agentId
+          }
         })
         .execute()
-        .catch((e) => {
-          throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
-        });
-
+         
       if (!createApplication.raw[0].id) {
         this.logger.debug(
           `Method: ${methodName} - Erorr Insert Application: `,
@@ -120,59 +118,66 @@ export class ApplicationService {
         message: 'create Application',
       };
     } catch (error) {
-      this.logger.debug(`Method: ${methodName} - Error: `, error);
+      console.log(error, 'Error Message')
       throw new HttpException(
         error.toString(),
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
   }
-  async update(id: string, body: UpdateApplicationDto) {
-    const methodName = this.update;
 
+  async update(id: string, body: UpdateApplicationDto) {
+    const methodName = this.update.name;
+  
     try {
       const findApplication = await ApplicationEntity.findOne({
         where: { id },
+        relations: { agent_id: true },
+      }).catch(() => {
+        throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
       });
-
+  
       if (!findApplication) {
         this.logger.debug(`Method: ${methodName} - Application Not Found: `, findApplication);
         throw new HttpException('Application not found', HttpStatus.NOT_FOUND);
       }
-
-      let findAgent = findApplication?.id;
-
-      if (body.id != 'null') {
-        findAgent = await findApplication.findOne({
-          where: {
-            id: body.id,
-          },
+  
+      let agent = findApplication.agent_id;
+      if (body.agentId) {
+        agent = await AgentsDateEntity.findOne({
+          where: { agent_id: body.agentId },
         });
-
-        if (!findAgent) {
-          this.logger.debug(
-            `Method: ${methodName} - User Not Found: `,
-            findAgent,
-          );
-          throw new HttpException('User Not Found', HttpStatus.NOT_FOUND);
+  
+        if (!agent) {
+          this.logger.debug(`Method: ${methodName} - Agent Not Found: `, agent);
+          throw new HttpException('Agent not found', HttpStatus.NOT_FOUND);
         }
       }
 
-      const updatedApplication: UpdateResult = await findApplication.update(id, {
-        workingHours: body.workingHours ?? findApplication.workingHours,
-        offDays: body.offDays ?? findApplication.offDays,
-        daysOfMonth: body.daysOfMonth ?? findApplication.daysOfMonth,
-        description: body.description ?? findApplication.description,
-      });
+      const updatedApplication: UpdateResult = await ApplicationEntity.createQueryBuilder()
+        .update(ApplicationEntity)
+        .set({
+          workingHours: body.workingHours ?? findApplication.workingHours,
+          offDays: body.offDays ?? findApplication.offDays,
+          daysOfMonth: body.daysOfMonth ?? findApplication.daysOfMonth,
+          description: body.description ?? findApplication.description,
+          agent_id: agent ? { agent_id: agent.agent_id } : findApplication.agent_id,
+        })
+        .where('id = :id', { id })
+        .execute();
+  
       if (!updatedApplication.affected) {
         this.logger.debug(
-          `Method: ${methodName} - Erorr Update Application: `,
+          `Method: ${methodName} - Error Updating Application: `,
           updatedApplication,
         );
-        throw new HttpException('update Erorr in Application', HttpStatus.BAD_REQUEST);
+        throw new HttpException('Update error in Application', HttpStatus.BAD_REQUEST);
       }
-
-      return updatedApplication;
+  
+      return {
+        message: 'Application updated successfully',
+        updatedApplication,
+      };
     } catch (error) {
       this.logger.debug(`Method: ${methodName} - Error: `, error);
       throw new HttpException(
@@ -181,6 +186,7 @@ export class ApplicationService {
       );
     }
   }
+  
 
   async delete(id: string) {
     const methodName = this.delete;

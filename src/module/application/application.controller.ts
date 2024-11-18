@@ -28,8 +28,8 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { ApplicationService } from './application.service';
-import { CreateApplicationSwaggerBodyDto, CreateApplicationDto  } from './dto/create_application.dto';
-import { UpdateApplicationSwaggerBodyDto, UpdateApplicationDto  } from './dto/update_application.dto';
+import { CreateApplicationDto  } from './dto/create_application.dto';
+import { UpdateApplicationDto  } from './dto/update_application.dto';
 import { jwtGuard } from '../auth/guards/jwt.guard';
 import { GetApplicationDto } from './dto/get_application.dto';
 
@@ -61,7 +61,6 @@ export class ApplicationController {
   // @UseGuards(jwtGuard)
   @Post('create')
   @HttpCode(HttpStatus.CREATED)
-  @ApiBody({ type: CreateApplicationSwaggerBodyDto })
   @ApiOperation({ description: 'Create Product with role' })
   @ApiCreatedResponse()
   @ApiBadRequestResponse()
@@ -73,7 +72,7 @@ export class ApplicationController {
   // @UseGuards(jwtGuard)
   @Patch('/update/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiBody({ type: UpdateApplicationSwaggerBodyDto })
+  @ApiBody({ type: UpdateApplicationDto })
   @ApiOperation({ summary: 'Update with role' })
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()

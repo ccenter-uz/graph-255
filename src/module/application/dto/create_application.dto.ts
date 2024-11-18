@@ -2,91 +2,42 @@ import { ApiProperty } from '@nestjs/swagger';
 import {
     IsString,
     IsNotEmpty,
-    IsUUID,
-    IsBoolean,
-    IsDateString,
+    IsArray,
   } from 'class-validator';
 
-  export class CreateApplicationDto {
-    @IsString()
-    @IsNotEmpty()
-    id: string;
-  
+  export class CreateApplicationDto { 
+    @ApiProperty()
     @IsString()
     @IsNotEmpty()
     workingHours: string;
   
-    @IsString()
+    @ApiProperty({example:['mon' , 'fri']})
+    @IsArray()
     @IsNotEmpty()
-    offDays: string;
+    offDays: string[];
   
-    @IsString()
+    @ApiProperty({example:[{
+      id: 1,
+      isWorkDay: true,
+      isOrder: true,
+      isNight: true,
+      isHoliday: true,
+      isToday: true,
+      isCheckable: true,
+      label: true,
+    }]})
+    
+    @IsArray()
     @IsNotEmpty()
-    daysOfMonth: string;
+    daysOfMonth: Object[];
   
+    @ApiProperty()
     @IsString()
     @IsNotEmpty()
     description: string;
   
+    @ApiProperty()
     @IsString()
     @IsNotEmpty()
-    agentIdAgentId: string;
-  }
-
-  export class CreateApplicationSwaggerBodyDto {
-    @ApiProperty({
-        type: 'string',
-        required: true,
-        example: 'string',
-      })
-      @IsUUID()
-      @IsNotEmpty()
-      id: string;
-    
-      @ApiProperty({
-        type: 'string',
-        required: true,
-        example: 'string',
-      })
-      @IsString()
-      @IsNotEmpty()
-      workingHours: string;
-    
-      @ApiProperty({
-        type: 'string',
-        required: true,
-        example: true,
-      })
-      @IsBoolean()
-      @IsNotEmpty()
-      offDays: string;
-    
-      @ApiProperty({
-        type: 'string',
-        required: true,
-        example: 'test',
-      })
-      @IsString()
-      @IsNotEmpty()
-      daysOfMonth: string;
-    
-      @ApiProperty({
-        type: 'string',
-        format: 'date',
-        required: true,
-        example: 'test',
-      })
-      @IsDateString()
-      @IsNotEmpty()
-      description: string;
-    
-      @ApiProperty({
-        type: 'string',
-        format: 'date',
-        required: true,
-        example: 'test',
-      })
-      @IsDateString()
-      @IsNotEmpty()
-      agentIdAgentId: string;
+    agentId: string;
   }

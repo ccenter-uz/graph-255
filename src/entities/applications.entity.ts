@@ -40,5 +40,5 @@ export class ApplicationEntity extends BaseEntity {
   @ManyToOne(() => AgentsDateEntity, (agent) => agent.applications, {
     onDelete: 'CASCADE',
   })
-  agent_id: AgentsDateEntity[];
+  agent_id: AgentsDateEntity;
 }
