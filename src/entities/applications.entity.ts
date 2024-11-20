@@ -18,11 +18,6 @@ export class ApplicationEntity extends BaseEntity {
   offDays: string[];
 
   @Column({
-    type: 'character varying',
-  })
-  full_name: string;
-
-  @Column({
     type: 'jsonb',
   })
   daysOfMonth: Array<{
@@ -45,5 +40,5 @@ export class ApplicationEntity extends BaseEntity {
   @ManyToOne(() => AgentsDateEntity, (agent) => agent.applications, {
     onDelete: 'CASCADE',
   })
-  agent_id: AgentsDateEntity[];
+  agent_id: AgentsDateEntity;
 }

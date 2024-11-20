@@ -3,6 +3,11 @@ export enum WorkTypes {
   Day = 'day',
 }
 
+export enum WorkTime {
+  day = '08-20',
+  night = '20-08'
+}
+
 export enum GraphTypes {
   Work = 'W',
   Day = 'day',

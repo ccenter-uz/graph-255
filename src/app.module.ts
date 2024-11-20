@@ -9,6 +9,7 @@ import { AgentsModule } from './module/agents/agents.module';
 import { CacheModule } from '@nestjs/cache-manager';
 import { AuthModule } from './module/auth/auth.module';
 import { RolesGuard } from './module/auth/guards/roles.guard';
+import { ApplicationModule } from './module/application/application.module';
 // import { CategoryInfoModule } from './module/categories_Info/users.module';
 // import { SoapModule } from './module/soap/soap.module';
 
@@ -25,6 +26,7 @@ import { RolesGuard } from './module/auth/guards/roles.guard';
     // }),
 
     AgentsModule,
+    ApplicationModule,
     AuthModule,
     CacheModule.registerAsync({
       isGlobal: true,
