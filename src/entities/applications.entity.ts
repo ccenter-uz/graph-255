@@ -1,4 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, ManyToOne } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  BaseEntity,
+  ManyToOne,
+  CreateDateColumn,
+} from 'typeorm';
 import { AgentsDateEntity } from './agentsdata.entity';
 
 @Entity()
@@ -37,8 +44,16 @@ export class ApplicationEntity extends BaseEntity {
   })
   description: string;
 
+  @Column({
+    type: 'character varying',
+    nullable: true,
+  })
+  requested_date: string;
   @ManyToOne(() => AgentsDateEntity, (agent) => agent.applications, {
     onDelete: 'CASCADE',
   })
   agent_id: AgentsDateEntity;
+
+  @CreateDateColumn({ name: 'created_at' })
+  create_data: Date;
 }

@@ -12,6 +12,7 @@ import {
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
+  ApiBearerAuth,
   ApiBody,
   ApiNotFoundResponse,
   ApiOkResponse,
@@ -19,16 +20,18 @@ import {
 } from '@nestjs/swagger';
 import { AgentsService } from './agents.service';
 import { GetOperatorDto } from './dto/get_operator.dto';
-import { CustomRequest } from 'src/types';
+import { CustomRequest, RolesEnum } from 'src/types';
+import { RequiredRoles } from '../auth/guards/roles.decorator';
 
 @Controller('agents')
 @ApiTags('agents')
+@ApiBearerAuth('JWT-auth')
 export class AgentsController {
   readonly #_service: AgentsService;
   constructor(service: AgentsService) {
     this.#_service = service;
   }
-
+  @RequiredRoles(RolesEnum.OPERATOR, RolesEnum.ADMIN)
   @Get('one-with-graphic')
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
@@ -44,9 +47,7 @@ export class AgentsController {
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   @ApiOkResponse()
-  async findOneAgentDataMonths(
-    @Req() req: CustomRequest,
-  ) {
+  async findOneAgentDataMonths(@Req() req: CustomRequest) {
     return await this.#_service.findOneAgentDataMonths(req);
   }
 

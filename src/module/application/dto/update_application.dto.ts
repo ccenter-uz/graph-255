@@ -4,34 +4,36 @@ import {
   IsArray
 } from 'class-validator';
 
-export class UpdateApplicationDto { 
+export class UpdateApplicationDto {
   @ApiProperty()
   @IsString()
   workingHours: string;
 
-  @ApiProperty({example:['mon' , 'fri']})
+  @ApiProperty({ example: ['mon', 'fri'] })
   @IsArray()
   offDays: string[];
 
-  @ApiProperty({example:[{
-    id: 1,
-    isWorkDay: true,
-    isOrder: true,
-    isNight: true,
-    isHoliday: true,
-    isToday: true,
-    isCheckable: true,
-    label: true,
-  }]})
-
+  @ApiProperty({
+    example: [
+      {
+        id: 1,
+        isWorkDay: true,
+        isOrder: true,
+        isNight: true,
+        isHoliday: true,
+        isToday: true,
+        isCheckable: true,
+        label: true,
+      },
+    ],
+  })
   @IsArray()
   daysOfMonth: Object[];
   @ApiProperty()
   @IsString()
-  
   description: string;
 
-  @ApiProperty()
+  @ApiProperty({ example: '2024/11' })
   @IsString()
-  agentId: string;
+  requested_date: string;
 }

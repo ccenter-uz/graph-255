@@ -22,7 +22,9 @@ export class AgentsService {
   constructor() {}
 
   async findOneAgent(req: CustomRequest, query: GetOperatorDto) {
-    const { login, month_id } = query;
+    const { month_id } = query;
+    console.log(req?.userId);
+    
     const findAgent = await AgentsDateEntity.findOne({
       where: {
         agent_id: req?.userId,
@@ -41,11 +43,9 @@ export class AgentsService {
             the_date: 'asc',
           },
         },
-        // create_data: 'DESC',
       },
     });
 
-    // Вызов функции и вывод результат
 
     if (!findAgent) {
       throw new HttpException('Not Found Agent', HttpStatus.NOT_FOUND);

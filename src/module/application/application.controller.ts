@@ -10,6 +10,7 @@ import {
   Patch,
   Post,
   Query,
+  Req,
   UploadedFiles,
   UseGuards,
   UseInterceptors,
@@ -28,10 +29,12 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { ApplicationService } from './application.service';
-import { CreateApplicationDto  } from './dto/create_application.dto';
-import { UpdateApplicationDto  } from './dto/update_application.dto';
+import { CreateApplicationDto } from './dto/create_application.dto';
+import { UpdateApplicationDto } from './dto/update_application.dto';
 import { jwtGuard } from '../auth/guards/jwt.guard';
 import { GetApplicationDto } from './dto/get_application.dto';
+import { CustomRequest, RolesEnum } from 'src/types';
+import { RequiredRoles } from '../auth/guards/roles.decorator';
 
 @Controller('Application')
 @ApiTags('Application')
@@ -41,15 +44,16 @@ export class ApplicationController {
   constructor(service: ApplicationService) {
     this.#_service = service;
   }
-
+  @RequiredRoles(RolesEnum.OPERATOR, RolesEnum.ADMIN)
   @Get('/all')
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   @ApiOkResponse()
-  async findall(@Query() query: GetApplicationDto ) {
-    return await this.#_service.findAll(query);
+  async findall(@Req() req: CustomRequest, @Query() query: GetApplicationDto) {
+    return await this.#_service.findAll(req, query);
   }
-
+  
+  @RequiredRoles(RolesEnum.OPERATOR, RolesEnum.ADMIN)
   @Get('/one/:id')
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
@@ -59,17 +63,22 @@ export class ApplicationController {
   }
 
   // @UseGuards(jwtGuard)
+  @RequiredRoles(RolesEnum.OPERATOR, RolesEnum.ADMIN)
   @Post('create')
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ description: 'Create Product with role' })
   @ApiCreatedResponse()
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
-  async create(@Body() createProductDto: CreateApplicationDto) {
-    return await this.#_service.create(createProductDto);
+  async create(
+    @Req() req: CustomRequest,
+    @Body() createProductDto: CreateApplicationDto,
+  ) {
+    return await this.#_service.create(req, createProductDto);
   }
 
   // @UseGuards(jwtGuard)
+  @RequiredRoles(RolesEnum.OPERATOR, RolesEnum.ADMIN)
   @Patch('/update/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiBody({ type: UpdateApplicationDto })
@@ -84,6 +93,7 @@ export class ApplicationController {
   }
 
   // @UseGuards(jwtGuard)
+  @RequiredRoles(RolesEnum.OPERATOR, RolesEnum.ADMIN)
   @Delete('/delete/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiBadRequestResponse()
