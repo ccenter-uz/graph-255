@@ -7,6 +7,7 @@ import { ApplicationEntity } from 'src/entities/applications.entity';
 import { GetApplicationDto } from './dto/get_application.dto';
 import { AgentsDateEntity } from 'src/entities/agentsdata.entity';
 import { CustomRequest } from 'src/types';
+import { SheetApplicationDto } from './dto/sheet_application.dto';
 
 @Injectable()
 export class ApplicationService {
@@ -65,15 +66,20 @@ export class ApplicationService {
     }
   }
 
-  async findOne(id: string) {
+  async findOne(id: string, query: GetApplicationDto) {
     const methodName = this.findOne.name;
+    const { requested_date } = query
     try {
       const findApplication = await ApplicationEntity.findOne({
-        where: { id },
+        where: { 
+          id,
+          requested_date: requested_date =='null' ? "null": requested_date,
+        },
         relations: {
           agent_id: true,
         },
       });
+
       if (!findApplication) {
         this.logger.debug(
           `Method: ${methodName} - Application Not Found: `,
@@ -238,4 +244,35 @@ export class ApplicationService {
       );
     }
   }
+
+  async getApplicationForSheets(query: SheetApplicationDto) {
+    const findAgent = await ApplicationEntity.findOne({
+      where: {
+        requested_date : query.requested_date
+      },
+    });
+  
+    if (!findAgent) {
+      throw new Error('Agent not found');
+    }
+    
+    let daysOfMonth = []
+    for(let day of findAgent.daysOfMonth ){
+      daysOfMonth.push({
+        id: day.id,
+        isWorkDay: day.isWorkDay,
+        isNight: day.isNight,
+        label: day.label,
+      })
+    }
+    const transformedData = {
+      workingHours: findAgent.workingHours,
+      offDays: findAgent.offDays,
+      daysOfMonth:daysOfMonth,
+      description: findAgent.description,
+    };
+    
+    return transformedData;
+  }
+  
 }

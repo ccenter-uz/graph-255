@@ -4,9 +4,9 @@ import { IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class GetOperatorDto {
 
-  @ApiProperty({ required: false, example: 'month_id' })
+  @ApiProperty({ required: false, example: '2024/11' })
   @IsOptional()
   @Type(() => String)
   @IsString()
-  month_id?: string = 'null';
+  year_and_month?: string = 'null';
 }

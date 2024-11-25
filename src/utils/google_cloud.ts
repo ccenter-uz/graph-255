@@ -47,7 +47,6 @@ export const readSheets = async (rangeName: string, rangeCut: string) => {
 };
 
 export const readSheet = async (rangeCut: string) => {
-  console.log(process.env.SHEETID);
 
   const sheets = google.sheets({ version: 'v4', auth });
   const spreadsheetId = process.env.SHEETID;

@@ -19,7 +19,6 @@ export class jwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(req: CustomRequest, payload: any) {
-    console.log(payload);
 
     return { id: payload.id, roles: payload.role, password: payload.password };
     // const findUser = await UsersEntity.findOne({

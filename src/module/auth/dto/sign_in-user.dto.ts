@@ -5,7 +5,7 @@ export class SingInUserDto {
   @ApiProperty({
     type: 'string',
     description: 'Phone',
-    example: '+998933843484',
+    example: 'SRV422',
   })
   @IsString()
   @MaxLength(200)
@@ -14,7 +14,7 @@ export class SingInUserDto {
   @ApiProperty({
     type: 'string',
     description: 'Phone',
-    example: '1234',
+    example: '452270',
   })
   @IsString()
   @MaxLength(200)

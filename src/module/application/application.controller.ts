@@ -58,8 +58,8 @@ export class ApplicationController {
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   @ApiOkResponse()
-  async findOne(@Param('id') id: string) {
-    return await this.#_service.findOne(id);
+  async findOne(@Param('id') id: string, @Query() query: GetApplicationDto) {
+    return await this.#_service.findOne(id, query);
   }
 
   // @UseGuards(jwtGuard)
@@ -101,5 +101,14 @@ export class ApplicationController {
   @ApiNoContentResponse()
   async remove(@Param('id') id: string): Promise<void> {
     await this.#_service.delete(id);
+  }
+
+  // @RequiredRoles(RolesEnum.OPERATOR, RolesEnum.ADMIN)
+  @Get('/forsheet')
+  @ApiBadRequestResponse()
+  @ApiNotFoundResponse()
+  @ApiOkResponse()
+  async getApplicationForSheets( @Query() query: GetApplicationDto) {
+    return await this.#_service.getApplicationForSheets( query);
   }
 }

@@ -22,14 +22,22 @@ export class AgentsService {
   constructor() {}
 
   async findOneAgent(req: CustomRequest, query: GetOperatorDto) {
-    const { month_id } = query;
-    console.log(req?.userId);
+    const { year_and_month } = query;
+
+    let monthOfNumber = null
+    let yearOfNumber = null
+    
+    if(query.year_and_month){
+      monthOfNumber = year_and_month.split('/')[1]
+      yearOfNumber = year_and_month.split('/')[0].toString();
+    }
     
     const findAgent = await AgentsDateEntity.findOne({
       where: {
         agent_id: req?.userId,
         months: {
-          id : month_id == 'null' ? 'null' : month_id
+          month_number: monthOfNumber,
+          year: yearOfNumber
         }
       },
       relations: {
@@ -83,7 +91,6 @@ export class AgentsService {
     return findAgent;
   }
 
-
   async findOneAgentDataMonths(req: CustomRequest) {
     const findAgent = await AgentsDateEntity.findOne({
       where: {
@@ -121,7 +128,6 @@ export class AgentsService {
 
         for (const e of sheets) {
           if (e[11] || e[12]) {
-            console.log(e[11], e[12]);
 
             const findAgent: AgentsDateEntity = await AgentsDateEntity.findOne({
               where: {
