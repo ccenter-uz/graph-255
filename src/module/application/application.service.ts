@@ -17,7 +17,7 @@ export class ApplicationService {
     const methodName = this.findAll;
     try {
       const { userId } = req;
-      const { pageNumber, pageSize } = query;
+      const { pageNumber, pageSize, requested_date } = query;
       const offset = (pageNumber - 1) * pageSize;
       const findAgent = await AgentsDateEntity.findOne({
         where: {
@@ -31,11 +31,12 @@ export class ApplicationService {
         );
         throw new HttpException('User not found', HttpStatus.NOT_FOUND);
       }
+      console.log(requested_date);
 
       const [results, total] = await ApplicationEntity.findAndCount({
         where: {
           agent_id: findAgent.agent_id as any,
-          requested_date: query.requested_date,
+          requested_date: requested_date,
         },
         relations: {
           agent_id: true,
@@ -66,17 +67,15 @@ export class ApplicationService {
     }
   }
 
-  async findOne(id: string, query: GetApplicationDto) {
+  async findOne(id: string) {
     const methodName = this.findOne.name;
-    const { requested_date } = query
     try {
       const findApplication = await ApplicationEntity.findOne({
-        where: { 
+        where: {
           id,
-          requested_date: requested_date =='null' ? "null": requested_date,
         },
         relations: {
-          agent_id: true,
+          // agent_id: true,
         },
       });
 
@@ -248,31 +247,30 @@ export class ApplicationService {
   async getApplicationForSheets(query: SheetApplicationDto) {
     const findAgent = await ApplicationEntity.findOne({
       where: {
-        requested_date : query.requested_date
+        requested_date: query.requested_date,
       },
     });
-  
+
     if (!findAgent) {
       throw new Error('Agent not found');
     }
-    
-    let daysOfMonth = []
-    for(let day of findAgent.daysOfMonth ){
+
+    let daysOfMonth = [];
+    for (let day of findAgent.daysOfMonth) {
       daysOfMonth.push({
         id: day.id,
         isWorkDay: day.isWorkDay,
         isNight: day.isNight,
         label: day.label,
-      })
+      });
     }
     const transformedData = {
       workingHours: findAgent.workingHours,
       offDays: findAgent.offDays,
-      daysOfMonth:daysOfMonth,
+      daysOfMonth: daysOfMonth,
       description: findAgent.description,
     };
-    
+
     return transformedData;
   }
-  
 }

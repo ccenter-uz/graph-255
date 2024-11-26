@@ -46,28 +46,29 @@ export class ApplicationController {
   }
   @RequiredRoles(RolesEnum.OPERATOR, RolesEnum.ADMIN)
   @Get('/all')
-  @ApiOperation({ description: 'Create Product with role' })
+  @ApiOperation({ description: 'Operatorni barcha qoldirgan Arizalarini olish uchun , Token bilan, Requested_date orqali filter qilish mumkin' })
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   @ApiOkResponse()
   async findall(@Req() req: CustomRequest, @Query() query: GetApplicationDto) {
     return await this.#_service.findAll(req, query);
   }
-  
+
   @RequiredRoles(RolesEnum.OPERATOR, RolesEnum.ADMIN)
   @Get('/one/:id')
+  @ApiOperation({ description: 'Token bilan' })
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   @ApiOkResponse()
-  async findOne(@Param('id') id: string, @Query() query: GetApplicationDto) {
-    return await this.#_service.findOne(id, query);
+  async findOne(@Param('id') id: string) {
+    return await this.#_service.findOne(id);
   }
 
   // @UseGuards(jwtGuard)
   @RequiredRoles(RolesEnum.OPERATOR, RolesEnum.ADMIN)
   @Post('create')
   @HttpCode(HttpStatus.CREATED)
-  @ApiOperation({ description: 'Create Product with role' })
+  @ApiOperation({ description: 'Grafik uchun ariza yaratish , Token bilan' })
   @ApiCreatedResponse()
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
@@ -83,7 +84,9 @@ export class ApplicationController {
   @Patch('/update/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiBody({ type: UpdateApplicationDto })
-  @ApiOperation({ summary: 'Update with role' })
+  @ApiOperation({
+    description: 'Grafik uchun qoldirilgan arizani yangilash, Token bilan ',
+  })
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   async update(
@@ -96,20 +99,28 @@ export class ApplicationController {
   // @UseGuards(jwtGuard)
   @RequiredRoles(RolesEnum.OPERATOR, RolesEnum.ADMIN)
   @Delete('/delete/:id')
-  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({
+    summary: 'FRONCHILAR TEGMASIN !!!!!',
+    description: "Qoldirilgan Arizani o'chirish uchun",
+  })
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   @ApiNoContentResponse()
+  @HttpCode(HttpStatus.NO_CONTENT)
   async remove(@Param('id') id: string): Promise<void> {
     await this.#_service.delete(id);
   }
 
   // @RequiredRoles(RolesEnum.OPERATOR, RolesEnum.ADMIN)
   @Get('/forsheet')
+  @ApiOperation({
+    summary: 'FRONCHILAR TEGMASIN !!!!!',
+    description: 'Barcha qoldirilgan Arizalarni Olish uchun',
+  })
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   @ApiOkResponse()
-  async getApplicationForSheets( @Query() query: GetApplicationDto) {
-    return await this.#_service.getApplicationForSheets( query);
+  async getApplicationForSheets(@Query() query: GetApplicationDto) {
+    return await this.#_service.getApplicationForSheets(query);
   }
 }

@@ -35,7 +35,10 @@ export class AgentsController {
 
   @RequiredRoles(RolesEnum.OPERATOR, RolesEnum.ADMIN)
   @Get('one-with-graphic')
-  @ApiOperation({ description: "KIRITILINGAN OYDAGI OPEARTORNI GRAFIGINI OLISH UCHUN, Token bilan, FORMAT :XXXX/YY" })
+  @ApiOperation({
+    description:
+      'KIRITILINGAN OYDAGI OPEARTORNI GRAFIGINI OLISH UCHUN, Token bilan, FORMAT :XXXX/YY',
+  })
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   @ApiOkResponse()
