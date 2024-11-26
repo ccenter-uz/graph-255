@@ -20,7 +20,8 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { SingInUserDto } from './dto/sign_in-user.dto';
-import { CustomRequest } from 'src/types';
+import { CustomRequest, RolesEnum } from 'src/types';
+import { RequiredRoles } from './guards/roles.decorator';
 
 @Controller('Auth')
 @ApiTags('Auth')
@@ -34,7 +35,7 @@ export class AuthController {
   signIn(@Body() body: SingInUserDto) {
     return this.service.signIn(body);
   }
-
+  @RequiredRoles(RolesEnum.OPERATOR, RolesEnum.ADMIN)
   @Get('/one/')
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()

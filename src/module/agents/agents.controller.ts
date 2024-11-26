@@ -35,7 +35,7 @@ export class AgentsController {
 
   @RequiredRoles(RolesEnum.OPERATOR, RolesEnum.ADMIN)
   @Get('one-with-graphic')
-  @ApiOperation({ description: "Yil va oy asosida operatorlar ro'yxati" })
+  @ApiOperation({ description: "KIRITILINGAN OYDAGI OPEARTORNI GRAFIGINI OLISH UCHUN, Token bilan, FORMAT :XXXX/YY" })
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   @ApiOkResponse()
@@ -63,7 +63,10 @@ export class AgentsController {
   }
 
   @Get('get-holiday-via-id')
-  @ApiOperation({ description: 'Oy sanasi oraqli bayram kunlarini chiqarish' })
+  @ApiOperation({
+    description:
+      'BAYRAM KUNLARINI OLISH UCHUN ,  Kerakli oy  malumotlarni olish uchun  Format  : YY',
+  })
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   @ApiOkResponse()
@@ -85,8 +88,8 @@ export class AgentsController {
 
   @Get('one')
   @ApiOperation({
-    description:
-      "Frontchilar  tegmasin!!!! Operator ma'lumotini login orqali qaytarish ",
+    summary: 'FRONTCHILAR  TEGMASIN!!!!',
+    description: "Operator ma'lumotini login orqali qaytarish ",
   })
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
@@ -97,6 +100,7 @@ export class AgentsController {
 
   @Get('writeNewGraph-or-update')
   @ApiOperation({
+    summary: 'FRONTCHILAR  TEGMASIN!!!!',
     description:
       'Frontchilar  tegmasin!!!! Sheets dan DBga graphic tortish yoki yangilash',
   })
@@ -109,6 +113,7 @@ export class AgentsController {
 
   @Get('write-super-visors')
   @ApiOperation({
+    summary: 'FRONTCHILAR  TEGMASIN!!!!',
     description: "Frontchilar  tegmasin!!!! Superviserlar ro'yxatini yangilash",
   })
   @ApiBadRequestResponse()
@@ -120,6 +125,7 @@ export class AgentsController {
 
   @Get('write-holidays')
   @ApiOperation({
+    summary: 'FRONTCHILAR  TEGMASIN!!!!',
     description: 'Frontchilar  tegmasin!!!!  Bayram kunlarini yangilash',
   })
   @ApiBadRequestResponse()
