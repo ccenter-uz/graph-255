@@ -209,7 +209,6 @@ export class AgentsService {
 
     findAgent.month = [newMoth];
     return findAgent;
-
   }
 
   @Cron('0 0 20 * * *')
@@ -1449,8 +1448,7 @@ export class AgentsService {
       where: {
         agent_id: req.userId,
       },
-
-    })
+    });
     const findSupervizers = await SupervisersEntity.find({
       where: {
         type: findOperator.service_name,
@@ -1462,10 +1460,12 @@ export class AgentsService {
 
   async getOfficeBranches() {
     const findAgent = await SupervisersEntity.find({
-      select: ["type"]
+      select: ['type'],
     });
 
-    const uniqueTypes = Array.from(new Set(findAgent.map(agent => agent.type)));
+    const uniqueTypes = Array.from(
+      new Set(findAgent.map((agent) => agent.type)),
+    );
 
     return uniqueTypes;
   }
@@ -1482,5 +1482,4 @@ export class AgentsService {
     }
     return findHoliday;
   }
-
 }
