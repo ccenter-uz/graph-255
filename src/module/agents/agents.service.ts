@@ -24,21 +24,21 @@ export class AgentsService {
   async findOneAgent(req: CustomRequest, query: GetOperatorDto) {
     const { year_and_month } = query;
 
-    let monthOfNumber = null
-    let yearOfNumber = null
-    
-    if(query.year_and_month){
-      monthOfNumber = year_and_month.split('/')[1]
+    let monthOfNumber = null;
+    let yearOfNumber = null;
+
+    if (query.year_and_month) {
+      monthOfNumber = year_and_month.split('/')[1];
       yearOfNumber = year_and_month.split('/')[0].toString();
     }
-    
-    const findAgent = await AgentsDateEntity.findOne({
+
+    const findAgent: any = await AgentsDateEntity.findOne({
       where: {
         agent_id: req?.userId,
         months: {
           month_number: monthOfNumber,
-          year: yearOfNumber
-        }
+          year: yearOfNumber,
+        },
       },
       relations: {
         months: {
@@ -54,15 +54,15 @@ export class AgentsService {
       },
     });
 
-
     if (!findAgent) {
       throw new HttpException('Not Found Agent', HttpStatus.NOT_FOUND);
     }
 
     let data = {};
     let days = [];
-
     const month = findAgent.months[0];
+    let newMoth: any = {};
+
     const [theMonthHolidaysInfo] = await this.getHolidayViaId(
       month.month_number + '',
     );
@@ -78,35 +78,78 @@ export class AgentsService {
           isMustOffday: false,
           isNight: day?.work_time === WorkTime.night,
           isOrder: day?.work_type === WorkTypes.Smen,
-          isToday: await getUzbekistanTime() === day?.the_date,
+          isToday: (await getUzbekistanTime()) === day?.the_date,
           isWorkDay: day.at_work === GraphTypes.Work,
           label: new Date(day.the_day_Format_Date).getDate(),
         };
 
-        days.push(data)
+        days.push(data);
       }
     }
-    month.days = days;
+    delete findAgent.months;
+    newMoth.id = month.id;
+    newMoth.lastOffDays = [
+      month.month_day_off_first,
+      month.month_day_off_second,
+    ];
+    newMoth.straight = month.month_straight;
+    newMoth.year = month.year;
+    newMoth.number = month.month_number;
+    newMoth.name = month.month_name;
+    newMoth.days_count = month.month_days_count;
+    newMoth.workingHours = month.month_work_time;
+    newMoth.create_data = month.create_data;
+    newMoth.days = days;
 
+    findAgent.month = newMoth;
     return findAgent;
   }
 
-  async findOneAgentDataMonths(req: CustomRequest) {
+  async findOneAgentDataMonths(req: CustomRequest, query: GetOperatorDto) {
+    let monthOfNumber = null;
+    let yearOfNumber = null;
+
+    if (query.year_and_month) {
+      monthOfNumber = query.year_and_month.split('/')[1];
+      yearOfNumber = query.year_and_month.split('/')[0].toString();
+    }
+
     const findAgent = await AgentsDateEntity.findOne({
       where: {
         agent_id: req?.userId,
+        months: {
+          month_number: monthOfNumber,
+          year: yearOfNumber,
+        },
       },
       relations: {
         months: true,
       },
       order: {
         months: {
-
           create_data: 'DESC',
         },
       },
     });
-    return findAgent
+    let newMoth: any = {};
+    const month = findAgent.months[0];
+
+    delete findAgent.months;
+    newMoth.id = month.id;
+    newMoth.lastOffDays = [
+      month.month_day_off_first,
+      month.month_day_off_second,
+    ];
+    newMoth.straight = month.month_straight;
+    newMoth.year = month.year;
+    newMoth.number = month.month_number;
+    newMoth.name = month.month_name;
+    newMoth.days_count = month.month_days_count;
+    newMoth.workingHours = month.month_work_time;
+    newMoth.create_data = month.create_data;
+    findAgent.months = newMoth;
+
+    return findAgent;
   }
 
   @Cron('0 0 20 * * *')
@@ -128,7 +171,6 @@ export class AgentsService {
 
         for (const e of sheets) {
           if (e[11] || e[12]) {
-
             const findAgent: AgentsDateEntity = await AgentsDateEntity.findOne({
               where: {
                 login: e[11],

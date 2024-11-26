@@ -32,9 +32,10 @@ export class AgentsController {
   constructor(service: AgentsService) {
     this.#_service = service;
   }
+
   @RequiredRoles(RolesEnum.OPERATOR, RolesEnum.ADMIN)
   @Get('one-with-graphic')
-  @ApiOperation({ description: 'Yil va oy asosida operatorlar ro\'yxati' })
+  @ApiOperation({ description: "Yil va oy asosida operatorlar ro'yxati" })
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   @ApiOkResponse()
@@ -45,58 +46,20 @@ export class AgentsController {
     return await this.#_service.findOneAgent(req, query);
   }
 
-  @Get('one-data-months')
-  @ApiOperation({ description: 'operator 1 ta oy' })
+  @RequiredRoles(RolesEnum.OPERATOR, RolesEnum.ADMIN)
+  @Get('data-months')
+  @ApiOperation({
+    description:
+      'OHIRGI OY MALUMOTINI OLISH UCHUN ,  Kerakli oy  malumotlarni olish uchun  Format :XXXX/YY , Token bilan',
+  })
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   @ApiOkResponse()
-  async findOneAgentDataMonths(@Req() req: CustomRequest) {
-    return await this.#_service.findOneAgentDataMonths(req);
-  }
-
-  @Get('one')
-  @ApiOperation({ description: 'Operator ma\'lumotini login orqali qaytarish  ' })
-  @ApiBadRequestResponse()
-  @ApiNotFoundResponse()
-  @ApiOkResponse()
-  async findOne(@Query('login') login: string) {
-    return await this.#_service.operatorForLogin(login);
-  }
-
-  @Get('writeNewGraph-or-update')
-  @ApiOperation({ description: 'Sheets dan DBga graphic tortish yoki yangilash' })
-  @ApiBadRequestResponse()
-  @ApiNotFoundResponse()
-  @ApiOkResponse()
-  async writeNewGraph() {
-    return await this.#_service.writeNewGraph();
-  }
-
-  @Get('write-super-visors')
-  @ApiOperation({ description: 'Superviserlar ro\'yxatini yangilash' })
-  @ApiBadRequestResponse()
-  @ApiNotFoundResponse()
-  @ApiOkResponse()
-  async writeSuperVisors() {
-    return await this.#_service.writeSuperVisors();
-  }
-
-  @Get('write-holidays')
-  @ApiOperation({ description: 'Bayram kunlarini yangilash' })
-  @ApiBadRequestResponse()
-  @ApiNotFoundResponse()
-  @ApiOkResponse()
-  async writeHolidays() {
-    return await this.#_service.writeHolidays();
-  }
-
-  @Get('get-supervisor-via-type')
-  @ApiOperation({ description: 'Superviserlar ro\'yxatini filial raqami orali chiqarish' })
-  @ApiBadRequestResponse()
-  @ApiNotFoundResponse()
-  @ApiOkResponse()
-  async getSupervisor(@Query('type') type: string) {
-    return await this.#_service.getSupervisor(type);
+  async findOneAgentDataMonths(
+    @Req() req: CustomRequest,
+    @Query() query: GetOperatorDto,
+  ) {
+    return await this.#_service.findOneAgentDataMonths(req, query);
   }
 
   @Get('get-holiday-via-id')
@@ -106,5 +69,63 @@ export class AgentsController {
   @ApiOkResponse()
   async getHolidayViaId(@Query('month_id') month_id: string) {
     return await this.#_service.getHolidayViaId(month_id);
+  }
+
+  @Get('get-supervisors')
+  @ApiOperation({
+    description:
+      "Superviserlar ro'yxatini xizmat raqamini kiritish orali olish misol: 1009 , 255,229",
+  })
+  @ApiBadRequestResponse()
+  @ApiNotFoundResponse()
+  @ApiOkResponse()
+  async getSupervisor(@Query('type') type: string) {
+    return await this.#_service.getSupervisor(type);
+  }
+
+  @Get('one')
+  @ApiOperation({
+    description:
+      "Frontchilar  tegmasin!!!! Operator ma'lumotini login orqali qaytarish ",
+  })
+  @ApiBadRequestResponse()
+  @ApiNotFoundResponse()
+  @ApiOkResponse()
+  async findOne(@Query('login') login: string) {
+    return await this.#_service.operatorForLogin(login);
+  }
+
+  @Get('writeNewGraph-or-update')
+  @ApiOperation({
+    description:
+      'Frontchilar  tegmasin!!!! Sheets dan DBga graphic tortish yoki yangilash',
+  })
+  @ApiBadRequestResponse()
+  @ApiNotFoundResponse()
+  @ApiOkResponse()
+  async writeNewGraph() {
+    return await this.#_service.writeNewGraph();
+  }
+
+  @Get('write-super-visors')
+  @ApiOperation({
+    description: "Frontchilar  tegmasin!!!! Superviserlar ro'yxatini yangilash",
+  })
+  @ApiBadRequestResponse()
+  @ApiNotFoundResponse()
+  @ApiOkResponse()
+  async writeSuperVisors() {
+    return await this.#_service.writeSuperVisors();
+  }
+
+  @Get('write-holidays')
+  @ApiOperation({
+    description: 'Frontchilar  tegmasin!!!!  Bayram kunlarini yangilash',
+  })
+  @ApiBadRequestResponse()
+  @ApiNotFoundResponse()
+  @ApiOkResponse()
+  async writeHolidays() {
+    return await this.#_service.writeHolidays();
   }
 }
