@@ -46,6 +46,7 @@ export class ApplicationController {
   }
   @RequiredRoles(RolesEnum.OPERATOR, RolesEnum.ADMIN)
   @Get('/all')
+  @ApiOperation({ description: 'Create Product with role' })
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   @ApiOkResponse()

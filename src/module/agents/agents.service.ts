@@ -683,7 +683,7 @@ export class AgentsService {
 
   async writeNewGraph() {
     try {
-      const cutRanges = 'A2:AR500';
+      const cutRanges = 'A2:AR';
 
       // const sheetId: string = '1BF7Z9CTKdL-RvBwzZTcB4gvOqoviX6fUwHIBmSlG_ow';
       const rangeName: string = 'ПРЕДПОЧТЕНИЯ';

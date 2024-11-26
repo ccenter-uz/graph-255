@@ -16,6 +16,7 @@ import {
   ApiBody,
   ApiNotFoundResponse,
   ApiOkResponse,
+  ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
 import { AgentsService } from './agents.service';
@@ -33,6 +34,7 @@ export class AgentsController {
   }
   @RequiredRoles(RolesEnum.OPERATOR, RolesEnum.ADMIN)
   @Get('one-with-graphic')
+  @ApiOperation({ description: 'Yil va oy asosida operatorlar ro\'yxati' })
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   @ApiOkResponse()
@@ -44,6 +46,7 @@ export class AgentsController {
   }
 
   @Get('one-data-months')
+  @ApiOperation({ description: 'operator 1 ta oy' })
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   @ApiOkResponse()
@@ -52,6 +55,7 @@ export class AgentsController {
   }
 
   @Get('one')
+  @ApiOperation({ description: 'Operator ma\'lumotini login orqali qaytarish  ' })
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   @ApiOkResponse()
@@ -60,6 +64,7 @@ export class AgentsController {
   }
 
   @Get('writeNewGraph-or-update')
+  @ApiOperation({ description: 'Sheets dan DBga graphic tortish yoki yangilash' })
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   @ApiOkResponse()
@@ -68,6 +73,7 @@ export class AgentsController {
   }
 
   @Get('write-super-visors')
+  @ApiOperation({ description: 'Superviserlar ro\'yxatini yangilash' })
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   @ApiOkResponse()
@@ -76,6 +82,7 @@ export class AgentsController {
   }
 
   @Get('write-holidays')
+  @ApiOperation({ description: 'Bayram kunlarini yangilash' })
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   @ApiOkResponse()
@@ -84,6 +91,7 @@ export class AgentsController {
   }
 
   @Get('get-supervisor-via-type')
+  @ApiOperation({ description: 'Superviserlar ro\'yxatini filial raqami orali chiqarish' })
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   @ApiOkResponse()
@@ -92,6 +100,7 @@ export class AgentsController {
   }
 
   @Get('get-holiday-via-id')
+  @ApiOperation({ description: 'Oy sanasi oraqli bayram kunlarini chiqarish' })
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   @ApiOkResponse()
