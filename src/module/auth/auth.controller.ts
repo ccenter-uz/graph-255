@@ -17,10 +17,12 @@ import {
   ApiNoContentResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
+  ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
 import { SingInUserDto } from './dto/sign_in-user.dto';
-import { CustomRequest } from 'src/types';
+import { CustomRequest, RolesEnum } from 'src/types';
+import { RequiredRoles } from './guards/roles.decorator';
 
 @Controller('Auth')
 @ApiTags('Auth')
@@ -34,8 +36,11 @@ export class AuthController {
   signIn(@Body() body: SingInUserDto) {
     return this.service.signIn(body);
   }
-
+  @RequiredRoles(RolesEnum.OPERATOR, RolesEnum.ADMIN)
   @Get('/one/')
+  @ApiOperation({
+    description: 'Operator malumotlarini olish uchun, Token bilan',
+  })
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   @ApiOkResponse()
@@ -43,8 +48,11 @@ export class AuthController {
     return await this.service.findOne(request);
   }
 
-  // @RequiredRoles(RolesEnum.ADMIN)
   @Delete('/deleteUser/:id')
+  @ApiOperation({
+    summary: 'FRONCHILAR TEGMASIN !!!!!',
+    description: 'Operatorni ochirish uchun',
+  })
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()

@@ -5,6 +5,7 @@ import {
   BaseEntity,
   ManyToOne,
   CreateDateColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { AgentsDateEntity } from './agentsdata.entity';
 
@@ -53,6 +54,9 @@ export class ApplicationEntity extends BaseEntity {
     onDelete: 'CASCADE',
   })
   agent_id: AgentsDateEntity;
+
+  @UpdateDateColumn({ name: 'updated_at' })
+  update_data: Date;
 
   @CreateDateColumn({ name: 'created_at' })
   create_data: Date;
