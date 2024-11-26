@@ -47,6 +47,28 @@ export class AgentsController {
   }
 
   @RequiredRoles(RolesEnum.OPERATOR, RolesEnum.ADMIN)
+  @Get('get-all-month')
+  @ApiOperation({ description: "getAllMonth" })
+  @ApiBadRequestResponse()
+  @ApiNotFoundResponse()
+  @ApiOkResponse()
+  async getAllMonth(
+    @Req() req: CustomRequest,
+  ) {
+    return await this.#_service.getAllMonth(req);
+  }
+
+  @RequiredRoles(RolesEnum.OPERATOR, RolesEnum.ADMIN)
+  @Get('get-office-branches')
+  @ApiOperation({ description: "getOfficeBranches" })
+  @ApiBadRequestResponse()
+  @ApiNotFoundResponse()
+  @ApiOkResponse()
+  async getOfficeBranches(@Query('type') type: string) {
+    return await this.#_service.getOfficeBranches(type);
+  }
+
+  @RequiredRoles(RolesEnum.OPERATOR, RolesEnum.ADMIN)
   @Get('data-months')
   @ApiOperation({
     description:

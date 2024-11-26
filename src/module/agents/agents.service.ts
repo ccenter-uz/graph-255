@@ -152,6 +152,66 @@ export class AgentsService {
     return findAgent;
   }
 
+  async getAllMonth(req: CustomRequest) {
+    const findAgent: any = await AgentsDateEntity.findOne({
+      where: {
+        agent_id: req?.userId,
+      },
+      relations: {
+        months: true,
+      },
+      order: {
+        months: {
+          create_data: 'DESC',
+        },
+      },
+    });
+
+    if (!findAgent) {
+      throw new HttpException('Not Found Agent', HttpStatus.NOT_FOUND);
+    }
+
+    let data = {};
+    let days = [];
+    const month = findAgent.months[0];
+    let newMoth: any = {};
+
+    const [theMonthHolidaysInfo] = await this.getHolidayViaId(
+      month.month_number + '',
+    );
+    const holidays = Object.values(JSON.parse(theMonthHolidaysInfo.holidays));
+
+    if (month.days) {
+      for (let j = 0; j < month.days.length; j++) {
+        const day = month.days[j];
+
+        data = {
+          id: day.id,
+          isHoliday: holidays.includes(day?.the_date),
+          isMustOffday: false,
+          isNight: day?.work_time === WorkTime.night,
+          isOrder: day?.work_type === WorkTypes.Smen,
+          isToday: (await getUzbekistanTime()) === day?.the_date,
+          isWorkDay: day.at_work === GraphTypes.Work,
+          label: new Date(day.the_day_Format_Date).getDate(),
+        };
+
+        days.push(data);
+      }
+    }
+
+    delete findAgent.months;
+
+    newMoth.year = month.year;
+    newMoth.number = month.month_number;
+    newMoth.name = month.month_name;
+    newMoth.days_count = month.month_days_count;
+
+    findAgent.month = [newMoth];
+    return findAgent;
+
+  }
+
   @Cron('0 0 20 * * *')
   async writeNewGraphlastMonth() {
     const now = new Date();
@@ -1394,6 +1454,19 @@ export class AgentsService {
     return findAgent;
   }
 
+  async getOfficeBranches(type: string) {
+    const findAgent = await SupervisersEntity.find({
+      where: {
+        type: type
+      },
+      select: ["type"]
+    });
+
+    const uniqueTypes = Array.from(new Set(findAgent.map(agent => agent.type)));
+
+    return uniqueTypes;
+  }
+
   async getHolidayViaId(id: string) {
     const findHoliday = await HolidaysEntity.find({
       where: {
@@ -1406,4 +1479,5 @@ export class AgentsService {
     }
     return findHoliday;
   }
+
 }
