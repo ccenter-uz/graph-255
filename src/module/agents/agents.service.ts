@@ -1444,14 +1444,20 @@ export class AgentsService {
     return findAgent;
   }
 
-  async getSupervisor(type: string) {
-    const findAgent = await SupervisersEntity.find({
+  async getSupervisor(req: CustomRequest) {
+    const findOperator = await AgentsDateEntity.findOne({
       where: {
-        type: type,
+        agent_id: req.userId,
+      },
+
+    })
+    const findSupervizers = await SupervisersEntity.find({
+      where: {
+        type: findOperator.service_name,
       },
     });
 
-    return findAgent;
+    return findSupervizers;
   }
 
   async getOfficeBranches() {

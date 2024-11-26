@@ -51,7 +51,9 @@ export class AgentsController {
 
   @RequiredRoles(RolesEnum.OPERATOR, RolesEnum.ADMIN)
   @Get('get-all-month')
-  @ApiOperation({ description: 'Bitta Operatorni grafigi bor oylari , Token bilan' })
+  @ApiOperation({
+    description: 'Bitta Operatorni grafigi bor oylari , Token bilan',
+  })
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   @ApiOkResponse()
@@ -88,27 +90,26 @@ export class AgentsController {
   }
 
   // @RequiredRoles(RolesEnum.OPERATOR, RolesEnum.ADMIN)
-  @Get('get-office-branches')
-  @ApiOperation({
-    description: "Barcha Smena bo'yicha xizmatlarni olish uchun ",
-  })
-  @ApiBadRequestResponse()
-  @ApiNotFoundResponse()
-  @ApiOkResponse()
-  async getOfficeBranches() {
-    return await this.#_service.getOfficeBranches();
-  }
-
+  // @Get('get-office-branches')
+  // @ApiOperation({
+  //   description: "Barcha Smena bo'yicha xizmatlarni olish uchun ",
+  // })
+  // @ApiBadRequestResponse()
+  // @ApiNotFoundResponse()
+  // @ApiOkResponse()
+  // async getOfficeBranches() {
+  //   return await this.#_service.getOfficeBranches();
+  // }
+  @RequiredRoles(RolesEnum.OPERATOR, RolesEnum.ADMIN)
   @Get('get-supervisors')
   @ApiOperation({
-    description:
-      "Superviserlar ro'yxatini xizmat raqamini kiritish orqali olish misol: 1009, 255, 229",
+    description: "Superviserlar ro'yxatini olish smena uchun",
   })
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   @ApiOkResponse()
-  async getSupervisor(@Query('type') type: string) {
-    return await this.#_service.getSupervisor(type);
+  async getSupervisor(@Req() req: CustomRequest) {
+    return await this.#_service.getSupervisor(req);
   }
 
   @Get('one')
