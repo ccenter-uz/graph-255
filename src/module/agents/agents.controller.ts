@@ -51,24 +51,12 @@ export class AgentsController {
 
   @RequiredRoles(RolesEnum.OPERATOR, RolesEnum.ADMIN)
   @Get('get-all-month')
-  @ApiOperation({ description: "getAllMonth" })
+  @ApiOperation({ description: 'Bitta Operatorni grafigi bor oylari , Token bilan' })
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   @ApiOkResponse()
-  async getAllMonth(
-    @Req() req: CustomRequest,
-  ) {
+  async getAllMonth(@Req() req: CustomRequest) {
     return await this.#_service.getAllMonth(req);
-  }
-
-  @RequiredRoles(RolesEnum.OPERATOR, RolesEnum.ADMIN)
-  @Get('get-office-branches')
-  @ApiOperation({ description: "getOfficeBranches" })
-  @ApiBadRequestResponse()
-  @ApiNotFoundResponse()
-  @ApiOkResponse()
-  async getOfficeBranches(@Query('type') type: string) {
-    return await this.#_service.getOfficeBranches(type);
   }
 
   @RequiredRoles(RolesEnum.OPERATOR, RolesEnum.ADMIN)
@@ -99,10 +87,22 @@ export class AgentsController {
     return await this.#_service.getHolidayViaId(month_id);
   }
 
+  // @RequiredRoles(RolesEnum.OPERATOR, RolesEnum.ADMIN)
+  @Get('get-office-branches')
+  @ApiOperation({
+    description: "Barcha Smena bo'yicha xizmatlarni olish uchun ",
+  })
+  @ApiBadRequestResponse()
+  @ApiNotFoundResponse()
+  @ApiOkResponse()
+  async getOfficeBranches() {
+    return await this.#_service.getOfficeBranches();
+  }
+
   @Get('get-supervisors')
   @ApiOperation({
     description:
-      "Superviserlar ro'yxatini xizmat raqamini kiritish orali olish misol: 1009 , 255,229",
+      "Superviserlar ro'yxatini xizmat raqamini kiritish orqali olish misol: 1009, 255, 229",
   })
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()

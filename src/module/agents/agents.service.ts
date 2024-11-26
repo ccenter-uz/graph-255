@@ -1454,11 +1454,8 @@ export class AgentsService {
     return findAgent;
   }
 
-  async getOfficeBranches(type: string) {
+  async getOfficeBranches() {
     const findAgent = await SupervisersEntity.find({
-      where: {
-        type: type
-      },
       select: ["type"]
     });
 
