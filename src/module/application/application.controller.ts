@@ -35,6 +35,7 @@ import { jwtGuard } from '../auth/guards/jwt.guard';
 import { GetApplicationDto } from './dto/get_application.dto';
 import { CustomRequest, RolesEnum } from 'src/types';
 import { RequiredRoles } from '../auth/guards/roles.decorator';
+import { SheetApplicationDto } from './dto/sheet_application.dto';
 
 @Controller('Application')
 @ApiTags('Application')
@@ -46,7 +47,10 @@ export class ApplicationController {
   }
   @RequiredRoles(RolesEnum.OPERATOR, RolesEnum.ADMIN)
   @Get('/all')
-  @ApiOperation({ description: 'Operatorni barcha qoldirgan Arizalarini olish uchun , Token bilan, Requested_date orqali filter qilish mumkin' })
+  @ApiOperation({
+    description:
+      'Operatorni barcha qoldirgan Arizalarini olish uchun , Token bilan, Requested_date orqali filter qilish mumkin',
+  })
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   @ApiOkResponse()
@@ -120,7 +124,7 @@ export class ApplicationController {
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   @ApiOkResponse()
-  async getApplicationForSheets(@Query() query: GetApplicationDto) {
+  async getApplicationForSheets(@Query() query: SheetApplicationDto) {
     return await this.#_service.getApplicationForSheets(query);
   }
 }

@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { CreateApplicationDto } from './dto/create_application.dto';
 import { UpdateApplicationDto } from './dto/update_application.dto';
 
-import { DeleteResult, InsertResult, UpdateResult } from 'typeorm';
+import { DeleteResult, ILike, InsertResult, Like, UpdateResult } from 'typeorm';
 import { ApplicationEntity } from 'src/entities/applications.entity';
 import { GetApplicationDto } from './dto/get_application.dto';
 import { AgentsDateEntity } from 'src/entities/agentsdata.entity';
@@ -17,7 +17,8 @@ export class ApplicationService {
     const methodName = this.findAll;
     try {
       const { userId } = req;
-      const { pageNumber, pageSize, requested_date } = query;
+      let { pageNumber, pageSize, year, month } = query;
+      let requested_date = null;
       const offset = (pageNumber - 1) * pageSize;
       const findAgent = await AgentsDateEntity.findOne({
         where: {
@@ -31,18 +32,34 @@ export class ApplicationService {
         );
         throw new HttpException('User not found', HttpStatus.NOT_FOUND);
       }
-      console.log(requested_date);
+      // console.log(requested_date);
+
+      if (year) {
+        requested_date = `${year}`;
+      }
+      if (month) {
+        requested_date = `${year}/${month}`;
+      }
+      console.log(year, month, requested_date);
+      
 
       const [results, total] = await ApplicationEntity.findAndCount({
         where: {
           agent_id: findAgent.agent_id as any,
-          requested_date: requested_date,
+          requested_date: requested_date
+            ? Like(`${requested_date}%`)
+            : undefined,
         },
         relations: {
-          agent_id: true,
+          // agent_id: true,
         },
         order: {
           create_data: 'DESC',
+        },
+        select: {
+          id: true,
+          requested_date: true,
+          create_data:true
         },
         skip: offset,
         take: pageSize,

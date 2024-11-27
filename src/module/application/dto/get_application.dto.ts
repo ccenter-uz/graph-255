@@ -3,11 +3,17 @@ import { Type } from "class-transformer";
 import { IsNumber, IsOptional, IsString } from "class-validator";
 
 export class GetApplicationDto {
-  @ApiProperty({ required: false, example: '2024/11' })
+  @ApiProperty({ required: false, example: '2024' })
   @IsOptional()
   @Type(() => String)
   @IsString()
-  requested_date?: string;
+  year?: string;
+
+  @ApiProperty({ required: false, example: '11' })
+  @IsOptional()
+  @Type(() => String)
+  @IsString()
+  month?: string;
 
   @ApiProperty({ required: false, example: 1 })
   @IsOptional()
