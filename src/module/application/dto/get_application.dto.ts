@@ -15,15 +15,5 @@ export class GetApplicationDto {
   @IsString()
   month?: string;
 
-  @ApiProperty({ required: false, example: 1 })
-  @IsOptional()
-  @Type(() => Number)
-  @IsNumber()
-  pageNumber?: number;
 
-  @ApiProperty({ required: false, example: 10 })
-  @IsOptional()
-  @Type(() => Number)
-  @IsNumber()
-  pageSize?: number;
 }

@@ -17,9 +17,9 @@ export class ApplicationService {
     const methodName = this.findAll;
     try {
       const { userId } = req;
-      let { pageNumber, pageSize, year, month } = query;
+      let { year, month } = query;
       let requested_date = null;
-      const offset = (pageNumber - 1) * pageSize;
+      // const offset = (pageNumber - 1) * pageSize;
       const findAgent = await AgentsDateEntity.findOne({
         where: {
           agent_id: userId,
@@ -40,10 +40,9 @@ export class ApplicationService {
       if (month) {
         requested_date = `${year}/${month}`;
       }
-      console.log(year, month, requested_date);
-      
+      // console.log(year, month, requested_date);
 
-      const [results, total] = await ApplicationEntity.findAndCount({
+      const findAll = await ApplicationEntity.find({
         where: {
           agent_id: findAgent.agent_id as any,
           requested_date: requested_date
@@ -59,21 +58,15 @@ export class ApplicationService {
         select: {
           id: true,
           requested_date: true,
-          create_data:true
+          create_data: true,
         },
-        skip: offset,
-        take: pageSize,
+        // skip: offset,
+        // take: pageSize,
       });
-      const totalPages = Math.ceil(total / pageSize);
+      // const totalPages = Math.ceil(total / pageSize);
 
       return {
-        results,
-        pagination: {
-          currentPage: pageNumber,
-          totalPages,
-          pageSize,
-          totalItems: total,
-        },
+        result: findAll,
       };
     } catch (error) {
       this.logger.debug(`Method: ${methodName} - Error: `, error);
