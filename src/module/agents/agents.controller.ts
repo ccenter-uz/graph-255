@@ -114,8 +114,7 @@ export class AgentsController {
 
   @Get('one')
   @ApiOperation({
-    summary: 'FRONTCHILAR  TEGMASIN!!!!',
-    description: "Operator ma'lumotini login orqali qaytarish ",
+    description: "Operator ma'lumotini login orqali qaytarish"
   })
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()

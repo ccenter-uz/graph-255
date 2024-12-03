@@ -1434,12 +1434,73 @@ export class AgentsService {
   }
 
   async operatorForLogin(login: string) {
-    const findAgent = await AgentsDateEntity.findOne({
+
+    const findAgent: any = await AgentsDateEntity.findOne({
       where: {
         login: login,
       },
+      relations: {
+        months: {
+          days: true,
+        },
+      },
+      order: {
+        months: {
+          days: {
+            the_date: 'asc',
+          },
+        },
+      },
     });
 
+    if (!findAgent) {
+      throw new HttpException('Not Found Agent', HttpStatus.NOT_FOUND);
+    }
+
+    let data = {};
+    let days = [];
+    const month = findAgent.months[0];
+    let newMoth: any = {};
+
+    const [theMonthHolidaysInfo] = await this.getHolidayViaId(
+      month.month_number + '',
+    );
+    const holidays = Object.values(JSON.parse(theMonthHolidaysInfo.holidays));
+
+    if (month.days) {
+      for (let j = 0; j < month.days.length; j++) {
+        const day = month.days[j];
+
+        data = {
+          id: day.id,
+          label: new Date(day.the_day_Format_Date).getDate(),
+          isNight: day?.work_time === WorkTime.night,
+          isOrder: day?.work_type === WorkTypes.Smen,
+          isToday: (await getUzbekistanTime()) === day?.the_date,
+          isHoliday: holidays.includes(day?.the_date),
+          isMustOffday: false,
+          isWorkDay: day.at_work === GraphTypes.Work,
+        };
+
+        days.push(data);
+      }
+    }
+    delete findAgent.months;
+    newMoth.id = month.id;
+    newMoth.lastOffDays = [
+      month.month_day_off_first,
+      month.month_day_off_second,
+    ];
+    newMoth.straight = month.month_straight;
+    newMoth.year = month.year;
+    newMoth.number = month.month_number;
+    newMoth.name = month.month_name;
+    newMoth.days_count = month.month_days_count;
+    newMoth.workingHours = month.month_work_time;
+    newMoth.create_data = month.create_data;
+    newMoth.days = days;
+
+    findAgent.month = newMoth;
     return findAgent;
   }
 
