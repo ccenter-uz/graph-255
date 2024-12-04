@@ -1433,11 +1433,11 @@ export class AgentsService {
     }
   }
 
-  async operatorForLogin(login: string) {
+  async operatorForLogin(agent_id: string) {
 
     const findAgent: any = await AgentsDateEntity.findOne({
       where: {
-        login: login,
+        agent_id: agent_id,
       },
       relations: {
         months: {
