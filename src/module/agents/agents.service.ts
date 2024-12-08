@@ -170,44 +170,40 @@ export class AgentsService {
     if (!findAgent) {
       throw new HttpException('Not Found Agent', HttpStatus.NOT_FOUND);
     }
+    console.log(findAgent);
 
     let data = {};
     let days = [];
-    const month = findAgent.months[0];
-    let newMoth: any = {};
+    const month = findAgent?.months;
+    let newMoth: any = [];
 
-    const [theMonthHolidaysInfo] = await this.getHolidayViaId(
-      month.month_number + '',
-    );
-    const holidays = Object.values(JSON.parse(theMonthHolidaysInfo.holidays));
-
-    if (month.days) {
-      for (let j = 0; j < month.days.length; j++) {
-        const day = month.days[j];
-
+    // const [theMonthHolidaysInfo] = await this.getHolidayViaId(
+    //   month.month_number + '',
+    // );
+    // const holidays = Object.values(JSON.parse(theMonthHolidaysInfo.holidays));
+    console.log(month.length ,"aaaa");
+    
+    if (month) {
+      for (let j = 0; j < month.length; j++) {
+        const getMonth = month[j];
+        console.log(getMonth , "getMonth");
+        
         data = {
-          id: day.id,
-          isHoliday: holidays.includes(day?.the_date),
-          isMustOffday: false,
-          isNight: day?.work_time === WorkTime.night,
-          isOrder: day?.work_type === WorkTypes.Smen,
-          isToday: (await getUzbekistanTime()) === day?.the_date,
-          isWorkDay: day.at_work === GraphTypes.Work,
-          label: new Date(day.the_day_Format_Date).getDate(),
+          year : getMonth.year,
+          number : getMonth.month_number,
+          name : getMonth.month_name,
+          days_count : getMonth.month_days_count,
         };
-
-        days.push(data);
+        await newMoth.push(data);
       }
+
     }
+
 
     delete findAgent.months;
 
-    newMoth.year = month.year;
-    newMoth.number = month.month_number;
-    newMoth.name = month.month_name;
-    newMoth.days_count = month.month_days_count;
 
-    findAgent.month = [newMoth];
+    findAgent.months = newMoth;
     return findAgent;
   }
 
