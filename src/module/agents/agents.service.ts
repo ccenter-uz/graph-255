@@ -1429,7 +1429,7 @@ export class AgentsService {
     }
   }
 
-  async operatorForLogin(req: CustomRequest, query: GetOperatorDto) {
+  async operatorForLogin(userId: string, query: GetOperatorDto) {
     const { year_and_month } = query;
 
     let monthOfNumber = null;
@@ -1442,11 +1442,10 @@ export class AgentsService {
 
     const findSupervisor = await SupervisersEntity.findOne({
       where: {
-        id: req.userId
+        id: userId
       }
     })
-    console.log(findSupervisor);
-    
+      
     const findAgent: any = await AgentsDateEntity.findOne({
       where: {
         login: findSupervisor.login,
