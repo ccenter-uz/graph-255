@@ -1429,11 +1429,31 @@ export class AgentsService {
     }
   }
 
-  async operatorForLogin(agent_id: string) {
+  async operatorForLogin(req: CustomRequest, query: GetOperatorDto) {
+    const { year_and_month } = query;
 
+    let monthOfNumber = null;
+    let yearOfNumber = null;
+
+    if (query.year_and_month) {
+      monthOfNumber = year_and_month.split('/')[1];
+      yearOfNumber = year_and_month.split('/')[0].toString();
+    }
+
+    const findSupervisor = await SupervisersEntity.findOne({
+      where: {
+        id: req.userId
+      }
+    })
+    console.log(findSupervisor);
+    
     const findAgent: any = await AgentsDateEntity.findOne({
       where: {
-        agent_id: agent_id,
+        login: findSupervisor.login,
+        months: {
+          month_number: monthOfNumber,
+          year: yearOfNumber,
+        },
       },
       relations: {
         months: {

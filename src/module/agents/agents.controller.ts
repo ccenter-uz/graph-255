@@ -119,8 +119,10 @@ export class AgentsController {
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   @ApiOkResponse()
-  async findOne(@Query("agent_id") agent_id: string) {
-    return await this.#_service.operatorForLogin(agent_id);
+  async findOne(
+    @Req() req: CustomRequest,
+    @Query() query: GetOperatorDto,) {
+    return await this.#_service.operatorForLogin(req, query);
   }
 
   @Get('writeNewGraph-or-update')

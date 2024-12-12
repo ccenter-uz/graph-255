@@ -255,13 +255,15 @@ export class ApplicationService {
   }
 
   async getApplicationForSheets(query: SheetApplicationDto) {
+    
+    
     const findAgent = await ApplicationEntity.findOne({
       where: {
         requested_date: query.requested_date,
       },
     });
-
-    if (!findAgent) {
+  
+    if (!findAgent || findAgent == null) {
       throw new Error('Agent not found');
     }
 

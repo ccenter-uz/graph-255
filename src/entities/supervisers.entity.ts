@@ -1,6 +1,7 @@
 import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { AgentsDateEntity } from './agentsdata.entity';
 import { group } from 'console';
+import { GraphMonthEntity } from './graphMoth';
 
 @Entity()
 export class SupervisersEntity extends BaseEntity {
@@ -24,6 +25,9 @@ export class SupervisersEntity extends BaseEntity {
 
   @OneToMany(() => AgentsDateEntity, (group) => group.agent_id)
   types: AgentsDateEntity[];
+
+  @OneToMany(() => GraphMonthEntity, (group) => group.agent_id)
+  months: GraphMonthEntity[];
 }
 
 // type ga qarab superviser berish 

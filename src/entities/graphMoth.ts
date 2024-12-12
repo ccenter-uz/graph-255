@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 import { AgentsDateEntity } from './agentsdata.entity';
 import { GraphDaysEntity } from './graphDays';
+import { ApplicationEntity } from './applications.entity';
 
 @Entity()
 export class GraphMonthEntity extends BaseEntity {
