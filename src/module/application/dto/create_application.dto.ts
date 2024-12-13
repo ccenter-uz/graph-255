@@ -3,17 +3,18 @@ import {
     IsString,
     IsNotEmpty,
     IsArray,
+    IsOptional,
   } from 'class-validator';
 
   export class CreateApplicationDto {
     @ApiProperty()
+    @IsOptional()
     @IsString()
-    @IsNotEmpty()
     workingHours: string;
 
     @ApiProperty({ example: ['mon', 'fri'] })
+    @IsOptional()
     @IsArray()
-    @IsNotEmpty()
     offDays: string[];
 
     @ApiProperty({
@@ -30,13 +31,13 @@ import {
         },
       ],
     })
+    @IsOptional()
     @IsArray()
-    @IsNotEmpty()
     daysOfMonth: Object[];
 
     @ApiProperty()
+    @IsOptional()
     @IsString()
-    @IsNotEmpty()
     description: string;
 
     @ApiProperty({example :'2024/11'})

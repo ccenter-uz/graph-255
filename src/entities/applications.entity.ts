@@ -16,17 +16,20 @@ export class ApplicationEntity extends BaseEntity {
 
   @Column({
     type: 'character varying',
+    nullable: true,
   })
   workingHours: string;
 
   @Column({
     type: 'text',
     array: true,
+    nullable: true,
   })
   offDays: string[];
 
   @Column({
     type: 'jsonb',
+    nullable: true,
   })
   daysOfMonth: Array<{
     id: number;
