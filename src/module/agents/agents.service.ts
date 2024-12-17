@@ -62,7 +62,8 @@ export class AgentsService {
     let days = [];
     const month = findAgent.months[0];
     let newMoth: any = {};
-
+    console.log(month);
+    
     const [theMonthHolidaysInfo] = await this.getHolidayViaId(
       month.month_number + '',
     );
@@ -80,6 +81,7 @@ export class AgentsService {
           isOrder: day?.work_type === WorkTypes.Smen,
           isToday: (await getUzbekistanTime()) === day?.the_date,
           isWorkDay: day.at_work === GraphTypes.Work,
+          isAtWork: day.at_work === 'Н',
           label: new Date(day.the_day_Format_Date).getDate(),
         };
 
