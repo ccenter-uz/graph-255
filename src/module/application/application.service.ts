@@ -257,7 +257,7 @@ export class ApplicationService {
   async getApplicationForSheets(query: SheetApplicationDto) {
     
     
-    const findAgent = await ApplicationEntity.findOne({
+    const findAgent = await ApplicationEntity.find({
       where: {
         requested_date: query.requested_date,
       },
@@ -267,22 +267,30 @@ export class ApplicationService {
       throw new Error('Agent not found');
     }
 
-    let daysOfMonth = [];
-    for (let day of findAgent.daysOfMonth) {
-      daysOfMonth.push({
-        id: day.id,
-        isWorkDay: day.isWorkDay,
-        isNight: day.isNight,
-        label: day.label,
-      });
-    }
-    const transformedData = {
-      workingHours: findAgent.workingHours,
-      offDays: findAgent.offDays,
-      daysOfMonth: daysOfMonth,
-      description: findAgent.description,
-    };
+    let arrData = []
 
-    return transformedData;
+    for (let agent of findAgent){
+
+      let daysOfMonth = [];
+      for (let day of agent.daysOfMonth) {
+        daysOfMonth.push({
+          id: day.id,
+          isWorkDay: day.isWorkDay,
+          isNight: day.isNight,
+          label: day.label,
+        });
+      }
+
+      const transformedData = {
+        workingHours: agent.workingHours,
+        offDays: agent.offDays,
+        daysOfMonth: daysOfMonth,
+        description: agent.description,
+      };
+      arrData.push(transformedData)
+
+    }
+
+    return arrData;
   }
 }

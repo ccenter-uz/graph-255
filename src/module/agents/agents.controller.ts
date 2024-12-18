@@ -162,4 +162,16 @@ export class AgentsController {
   async writeHolidays() {
     return await this.#_service.writeHolidays();
   }
+
+  @Get('write-photos')
+  @ApiOperation({
+    summary: 'FRONTCHILAR  TEGMASIN!!!!',
+    description: 'Frontchilar  tegmasin!!!!  Rasmlarni yangilash',
+  })
+  @ApiBadRequestResponse()
+  @ApiNotFoundResponse()
+  @ApiOkResponse()
+  async writePhotos() {
+    return await this.#_service.writePhotos();
+  }
 }

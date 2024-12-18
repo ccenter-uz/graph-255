@@ -62,6 +62,12 @@ export class AgentsDateEntity extends BaseEntity {
     nullable: true,
   })
   role: string;
+  
+  @Column({
+    type: 'character varying',
+    nullable: true,
+  })
+  image: string;
 
   @OneToMany(() => GraphMonthEntity, (group) => group.agent_id)
   months: GraphMonthEntity[];

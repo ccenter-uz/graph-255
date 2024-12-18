@@ -1378,6 +1378,28 @@ export class AgentsService {
     }
   }
 
+  async writePhotos(){
+    const cutRanges = 'A1:B';
+    const rangeName: string = 'PHOTO';
+    const sheets = await readSheets(rangeName, cutRanges);
+
+    for (const e of sheets) {
+      const findAgent = await AgentsDateEntity.findOne({
+        where: {
+          name: e[0],
+        },
+      });
+      console.log(findAgent);
+      
+      if (findAgent) {
+        await AgentsDateEntity.update(findAgent.agent_id, {
+          ...findAgent,
+          image: e[1],
+        });
+      }
+    }
+  }
+
   async writeHolidays() {
     const cutRanges = 'D1:K12';
     const rangeName: string = 'ПРЕДПОЧТЕНИЯ2';

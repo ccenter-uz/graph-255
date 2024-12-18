@@ -7,6 +7,7 @@ import {
   Get,
   Delete,
   Req,
+  Query,
 } from '@nestjs/common';
 import { AuthServise } from './auth.service';
 import { Controller } from '@nestjs/common';
@@ -18,6 +19,7 @@ import {
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
+  ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
 import { SingInUserDto } from './dto/sign_in-user.dto';
@@ -37,6 +39,7 @@ export class AuthController {
     return this.service.signIn(body);
   }
   @RequiredRoles(RolesEnum.OPERATOR, RolesEnum.ADMIN)
+  @RequiredRoles(RolesEnum.OPERATOR, RolesEnum.ADMIN)
   @Get('/one/')
   @ApiOperation({
     description: 'Operator malumotlarini olish uchun, Token bilan',
@@ -46,6 +49,18 @@ export class AuthController {
   @ApiOkResponse()
   async findOne(@Req() request: CustomRequest) {
     return await this.service.findOne(request);
+  }
+
+  @Get('/forbot/one')
+  @ApiOperation({
+    description: 'Operator malumotlarini olish uchun, Token bilan',
+  })
+  @ApiQuery({ name: 'name', required: true, description: 'Имя оператора для поиска' })
+  @ApiBadRequestResponse()
+  @ApiNotFoundResponse()
+  @ApiOkResponse()
+  async findOneForBot(@Query('name') name: string) {
+    return await this.service.findOneForBot(name);
   }
 
   @Delete('/deleteUser/:id')

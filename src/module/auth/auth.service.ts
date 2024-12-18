@@ -49,6 +49,20 @@ export class AuthServise {
     return finduser;
   }
 
+  async findOneForBot(name: string) {
+    const finduser = await AgentsDateEntity.findOne({
+      where: {
+        name: name,
+      },
+    });
+    
+    if (!finduser) {
+      throw new HttpException('user not found', HttpStatus.NOT_FOUND);
+    }
+
+    return finduser;
+  }
+
   async delete(id: string) {
     const findUser = await AgentsDateEntity.findOne({
       where: {
