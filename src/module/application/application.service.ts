@@ -32,7 +32,6 @@ export class ApplicationService {
         );
         throw new HttpException('User not found', HttpStatus.NOT_FOUND);
       }
-      // console.log(requested_date);
 
       if (year) {
         requested_date = `${year}`;
@@ -40,7 +39,6 @@ export class ApplicationService {
       if (month) {
         requested_date = `${year}/${month}`;
       }
-      // console.log(year, month, requested_date);
 
       const findAll = await ApplicationEntity.find({
         where: {

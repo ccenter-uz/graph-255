@@ -62,7 +62,6 @@ export class AgentsService {
     let days = [];
     const month = findAgent.months[0];
     let newMoth: any = {};
-    console.log(month);
     
     const [theMonthHolidaysInfo] = await this.getHolidayViaId(
       month.month_number + '',
@@ -172,7 +171,6 @@ export class AgentsService {
     if (!findAgent) {
       throw new HttpException('Not Found Agent', HttpStatus.NOT_FOUND);
     }
-    console.log(findAgent);
 
     let data = {};
     let days = [];
@@ -183,12 +181,10 @@ export class AgentsService {
     //   month.month_number + '',
     // );
     // const holidays = Object.values(JSON.parse(theMonthHolidaysInfo.holidays));
-    console.log(month.length ,"aaaa");
     
     if (month) {
       for (let j = 0; j < month.length; j++) {
         const getMonth = month[j];
-        console.log(getMonth , "getMonth");
         
         data = {
           year : getMonth.year,
@@ -696,8 +692,6 @@ export class AgentsService {
                         '09-18',
                       ];
                       const typesSmen = ['08-20', '20-08'];
-                      // console.log(dataDay[1] , dataDay , firstday );
-                      //
 
                       if (typesGraph.includes(dataDay[1])) {
                         await GraphDaysEntity.createQueryBuilder()
@@ -790,7 +784,6 @@ export class AgentsService {
 
       for (const e of sheets) {
         if (e[11] || e[12]) {
-          console.log(e[11], e[12]);
 
           const findAgent: AgentsDateEntity = await AgentsDateEntity.findOne({
             where: {
@@ -1257,8 +1250,6 @@ export class AgentsService {
                       '09-18',
                     ];
                     const typesSmen = ['08-20', '20-08'];
-                    // console.log(dataDay[1] , dataDay , firstday );
-                    //
 
                     if (typesGraph.includes(dataDay[1])) {
                       await GraphDaysEntity.createQueryBuilder()
@@ -1389,7 +1380,6 @@ export class AgentsService {
           name: e[0],
         },
       });
-      console.log(findAgent);
       
       if (findAgent) {
         await AgentsDateEntity.update(findAgent.agent_id, {
