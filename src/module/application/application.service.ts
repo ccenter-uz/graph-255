@@ -259,6 +259,9 @@ export class ApplicationService {
       where: {
         requested_date: query.requested_date,
       },
+      relations: {
+        agent_id: true
+      }
     });
   
     if (!findAgent || findAgent == null) {
@@ -268,7 +271,6 @@ export class ApplicationService {
     let arrData = []
 
     for (let agent of findAgent){
-
       let daysOfMonth = [];
       for (let day of agent.daysOfMonth) {
         daysOfMonth.push({
@@ -278,17 +280,18 @@ export class ApplicationService {
           label: day.label,
         });
       }
-
+      
       const transformedData = {
+        fullName: agent.agent_id.name,
         workingHours: agent.workingHours,
         offDays: agent.offDays,
         daysOfMonth: daysOfMonth,
         description: agent.description,
       };
       arrData.push(transformedData)
-
+ 
     }
-
+    
     return arrData;
   }
 }
