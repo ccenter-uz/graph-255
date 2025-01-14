@@ -50,11 +50,7 @@ export class AgentsDateEntity extends BaseEntity {
   })
   secont_number: string;
 
-  @Column({
-    type: 'character varying',
-    nullable: true,
-  })
-  chat_id: string;
+
 
   @Column({
     type: 'character varying',
@@ -62,7 +58,7 @@ export class AgentsDateEntity extends BaseEntity {
     nullable: true,
   })
   role: string;
-  
+
   @Column({
     type: 'character varying',
     nullable: true,

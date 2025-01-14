@@ -23,6 +23,7 @@ export class AgentsService {
 
   async findOneAgent(req: CustomRequest, query: GetOperatorDto) {
     const { year_and_month } = query;
+    console.log(query);
 
     let monthOfNumber = null;
     let yearOfNumber = null;
@@ -31,6 +32,7 @@ export class AgentsService {
       monthOfNumber = year_and_month.split('/')[1];
       yearOfNumber = year_and_month.split('/')[0].toString();
     }
+    console.log(monthOfNumber, yearOfNumber, req.userId);
 
     const findAgent: any = await AgentsDateEntity.findOne({
       where: {
@@ -62,11 +64,14 @@ export class AgentsService {
     let days = [];
     const month = findAgent.months[0];
     let newMoth: any = {};
-    
+
     const [theMonthHolidaysInfo] = await this.getHolidayViaId(
       month.month_number + '',
     );
-    const holidays = Object.values(JSON.parse(theMonthHolidaysInfo.holidays));
+    console.log(theMonthHolidaysInfo);
+
+    const holidays = Object.values(JSON.parse(theMonthHolidaysInfo?.holidays));
+    console.log(findAgent);
 
     if (month.days) {
       for (let j = 0; j < month.days.length; j++) {
@@ -99,6 +104,8 @@ export class AgentsService {
     newMoth.name = month.month_name;
     newMoth.days_count = month.month_days_count;
     newMoth.workingHours = month.month_work_time;
+    newMoth.currentSupervisor = month.current_supervisor;
+    newMoth.workTime = month.work_time;
     newMoth.create_data = month.create_data;
     newMoth.days = days;
 
@@ -147,6 +154,8 @@ export class AgentsService {
     newMoth.name = month.month_name;
     newMoth.days_count = month.month_days_count;
     newMoth.workingHours = month.month_work_time;
+    newMoth.currentSupervisor = month.current_supervisor;
+    newMoth.workTime = month.work_time;
     newMoth.create_data = month.create_data;
     findAgent.months = newMoth;
 
@@ -181,25 +190,22 @@ export class AgentsService {
     //   month.month_number + '',
     // );
     // const holidays = Object.values(JSON.parse(theMonthHolidaysInfo.holidays));
-    
+
     if (month) {
       for (let j = 0; j < month.length; j++) {
         const getMonth = month[j];
-        
+
         data = {
-          year : getMonth.year,
-          number : getMonth.month_number,
-          name : getMonth.month_name,
-          days_count : getMonth.month_days_count,
+          year: getMonth.year,
+          number: getMonth.month_number,
+          name: getMonth.month_name,
+          days_count: getMonth.month_days_count,
         };
         await newMoth.push(data);
       }
-
     }
 
-
     delete findAgent.months;
-
 
     findAgent.months = newMoth;
     return findAgent;
@@ -243,7 +249,6 @@ export class AgentsService {
                   name: e[10],
                   login: e[11],
                   password: e[12],
-                  chat_id: e[4],
                   first_number: e[5],
                   secont_number: e[6],
                 })
@@ -275,6 +280,9 @@ export class AgentsService {
                       month_day_off_second: e[2],
                       month_straight: e[3],
                       month_work_time: e[0],
+                      current_supervisor: e[4],
+
+                      work_time: e[9],
                       agent_id: updateAgent.raw[0].agent_id,
                     })
                     .where('id = :id', { id: findMonth.id })
@@ -477,6 +485,8 @@ export class AgentsService {
                       month_day_off_second: e[2],
                       month_straight: e[3],
                       month_work_time: e[0],
+                      current_supervisor: e[4],
+                      work_time: e[9],
                       agent_id: updateAgent.raw[0].agent_id,
                     })
                     .returning(['id'])
@@ -612,7 +622,6 @@ export class AgentsService {
                   name: e[10],
                   login: e[11],
                   password: e[12],
-                  chat_id: e[4],
                   first_number: e[5],
                   secont_number: e[6],
                 })
@@ -641,6 +650,8 @@ export class AgentsService {
                     month_day_off_second: e[2],
                     month_straight: e[3],
                     month_work_time: e[0],
+                    current_supervisor: e[4],
+                    work_time: e[9],
                     agent_id: newAgent.raw[0].agent_id,
                   })
                   .returning(['id'])
@@ -784,7 +795,6 @@ export class AgentsService {
 
       for (const e of sheets) {
         if (e[11] || e[12]) {
-
           const findAgent: AgentsDateEntity = await AgentsDateEntity.findOne({
             where: {
               login: e[11],
@@ -804,7 +814,6 @@ export class AgentsService {
                 name: e[10],
                 login: e[11],
                 password: e[12],
-                chat_id: e[4],
                 first_number: e[5],
                 secont_number: e[6],
               })
@@ -836,6 +845,9 @@ export class AgentsService {
                     month_day_off_second: e[2],
                     month_straight: e[3],
                     month_work_time: e[0],
+                    current_supervisor: e[4],
+
+                    work_time: e[9],
                     agent_id: updateAgent.raw[0].agent_id,
                   })
                   .where('id = :id', { id: findMonth.id })
@@ -1038,6 +1050,9 @@ export class AgentsService {
                     month_day_off_second: e[2],
                     month_straight: e[3],
                     month_work_time: e[0],
+                    current_supervisor: e[4],
+
+                    work_time: e[9],
                     agent_id: updateAgent.raw[0].agent_id,
                   })
                   .returning(['id'])
@@ -1173,7 +1188,6 @@ export class AgentsService {
                 name: e[10],
                 login: e[11],
                 password: e[12],
-                chat_id: e[4],
                 first_number: e[5],
                 secont_number: e[6],
               })
@@ -1199,6 +1213,9 @@ export class AgentsService {
                   month_day_off_second: e[2],
                   month_straight: e[3],
                   month_work_time: e[0],
+                  current_supervisor: e[4],
+
+                  work_time: e[9],
                   agent_id: newAgent.raw[0].agent_id,
                 })
                 .returning(['id'])
@@ -1337,7 +1354,10 @@ export class AgentsService {
     const cutRanges = 'A2:C';
     const rangeName: string = 'ПРЕДПОЧТЕНИЯ2';
     const sheets = await readSheets(rangeName, cutRanges);
-
+    const findVisor = await SupervisersEntity.find();
+    for (const e of findVisor) {
+      await SupervisersEntity.delete(e.id);
+    }
     for (const e of sheets) {
       if (e[0]) {
         const findVisor = await SupervisersEntity.findOne({
@@ -1369,7 +1389,7 @@ export class AgentsService {
     }
   }
 
-  async writePhotos(){
+  async writePhotos() {
     const cutRanges = 'A1:B';
     const rangeName: string = 'PHOTO';
     const sheets = await readSheets(rangeName, cutRanges);
@@ -1380,7 +1400,7 @@ export class AgentsService {
           name: e[0],
         },
       });
-      
+
       if (findAgent) {
         await AgentsDateEntity.update(findAgent.agent_id, {
           ...findAgent,
@@ -1456,10 +1476,10 @@ export class AgentsService {
 
     const findSupervisor = await SupervisersEntity.findOne({
       where: {
-        id: userId
-      }
-    })
-      
+        id: userId,
+      },
+    });
+
     const findAgent: any = await AgentsDateEntity.findOne({
       where: {
         login: findSupervisor.login,
@@ -1526,6 +1546,8 @@ export class AgentsService {
     newMoth.name = month.month_name;
     newMoth.days_count = month.month_days_count;
     newMoth.workingHours = month.month_work_time;
+    newMoth.currentSupervisor = month.current_supervisor;
+    newMoth.workTime = month.work_time;
     newMoth.create_data = month.create_data;
     newMoth.days = days;
 

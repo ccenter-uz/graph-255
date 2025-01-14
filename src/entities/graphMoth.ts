@@ -53,8 +53,19 @@ export class GraphMonthEntity extends BaseEntity {
     type: 'character varying',
     nullable: true,
   })
+  current_supervisor: string;
+
+  @Column({
+    type: 'character varying',
+    nullable: true,
+  })
   month_work_time: string;
 
+  @Column({
+    type: 'character varying',
+    nullable: true,
+  })
+  work_time: string;
   @Column({
     type: 'character varying',
     nullable: true,
