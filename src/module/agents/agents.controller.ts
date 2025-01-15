@@ -112,18 +112,15 @@ export class AgentsController {
     return await this.#_service.getSupervisor(req);
   }
 
-  @Get('get-operator-by-id/:id')
+  @Get('get-operator-by-id/:login')
   @ApiOperation({
-    description: "Operator ma'lumotini login orqali qaytarish"
+    description: "Operator ma'lumotini login orqali qaytarish",
   })
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   @ApiOkResponse()
-  async findOne(
-    @Param("id") id: string,
-    @Query() query: GetOperatorDto,
-  ) {
-    return await this.#_service.operatorForLogin(id, query);
+  async findOne(@Param('login') login: string, @Query() query: GetOperatorDto) {
+    return await this.#_service.operatorForLogin(login, query);
   }
 
   @Get('writeNewGraph-or-update')

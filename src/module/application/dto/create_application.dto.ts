@@ -38,9 +38,14 @@ import {
     @ApiProperty()
     @IsOptional()
     @IsString()
+    supervizorName: string;
+
+    @ApiProperty()
+    @IsOptional()
+    @IsString()
     description: string;
 
-    @ApiProperty({example :'2024/11'})
+    @ApiProperty({ example: '2024/11' })
     @IsString()
     @IsNotEmpty()
     requested_date: string;

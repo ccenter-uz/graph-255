@@ -1463,7 +1463,8 @@ export class AgentsService {
     }
   }
 
-  async operatorForLogin(userId: string, query: GetOperatorDto) {
+    
+  async operatorForLogin(login: string, query: GetOperatorDto) {
     const { year_and_month } = query;
 
     let monthOfNumber = null;
@@ -1474,15 +1475,11 @@ export class AgentsService {
       yearOfNumber = year_and_month.split('/')[0].toString();
     }
 
-    const findSupervisor = await SupervisersEntity.findOne({
-      where: {
-        id: userId,
-      },
-    });
+
 
     const findAgent: any = await AgentsDateEntity.findOne({
       where: {
-        login: findSupervisor.login,
+        login: login,
         months: {
           month_number: monthOfNumber,
           year: yearOfNumber,

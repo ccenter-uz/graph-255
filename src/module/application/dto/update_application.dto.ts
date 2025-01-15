@@ -1,7 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
   IsString,
-  IsArray
+  IsArray,
+  IsOptional
 } from 'class-validator';
 
 export class UpdateApplicationDto {
@@ -29,9 +30,15 @@ export class UpdateApplicationDto {
   })
   @IsArray()
   daysOfMonth: Object[];
+
   @ApiProperty()
   @IsString()
   description: string;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  supervizorName: string;
 
   @ApiProperty({ example: '2024/11' })
   @IsString()

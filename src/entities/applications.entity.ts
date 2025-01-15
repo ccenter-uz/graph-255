@@ -52,6 +52,12 @@ export class ApplicationEntity extends BaseEntity {
     type: 'character varying',
     nullable: true,
   })
+  supervizorName: string;
+
+  @Column({
+    type: 'character varying',
+    nullable: true,
+  })
   requested_date: string;
   @ManyToOne(() => AgentsDateEntity, (agent) => agent.applications, {
     onDelete: 'CASCADE',

@@ -128,6 +128,7 @@ export class ApplicationService {
           .insert()
           .into(ApplicationEntity)
           .values({
+            supervizorName: body.supervizorName,
             workingHours: body.workingHours,
             offDays: body.offDays,
             daysOfMonth: body.daysOfMonth,
@@ -185,6 +186,8 @@ export class ApplicationService {
             offDays: body.offDays ?? findApplication.offDays,
             daysOfMonth: body.daysOfMonth ?? findApplication.daysOfMonth,
             description: body.description ?? findApplication.description,
+            supervizorName:
+              body.supervizorName ?? findApplication.supervizorName,
             requested_date:
               body.requested_date ?? findApplication.requested_date,
           })
@@ -253,26 +256,24 @@ export class ApplicationService {
   }
 
   async getApplicationForSheets(query: SheetApplicationDto) {
-    
-    
-    const findAgent = await ApplicationEntity.find({
+    const findApplication = await ApplicationEntity.find({
       where: {
         requested_date: query.requested_date,
       },
       relations: {
-        agent_id: true
-      }
+        agent_id: true,
+      },
     });
-  
-    if (!findAgent || findAgent == null) {
+
+    if (!findApplication || findApplication == null) {
       throw new Error('Agent not found');
     }
 
-    let arrData = []
+    let arrData = [];
 
-    for (let agent of findAgent){
+    for (let application of findApplication) {
       let daysOfMonth = [];
-      for (let day of agent.daysOfMonth) {
+      for (let day of application.daysOfMonth) {
         daysOfMonth.push({
           id: day.id,
           isWorkDay: day.isWorkDay,
@@ -280,18 +281,19 @@ export class ApplicationService {
           label: day.label,
         });
       }
-      
+
       const transformedData = {
-        fullName: agent.agent_id.name,
-        workingHours: agent.workingHours,
-        offDays: agent.offDays,
+        fullName: application.agent_id.name,
+        workingHours: application.workingHours,
+        offDays: application.offDays,
         daysOfMonth: daysOfMonth,
-        description: agent.description,
+        description: application.description,
+        requested_date: application.requested_date,
+        supervizorName: application.supervizorName,
       };
-      arrData.push(transformedData)
- 
+      arrData.push(transformedData);
     }
-    
+
     return arrData;
   }
 }
