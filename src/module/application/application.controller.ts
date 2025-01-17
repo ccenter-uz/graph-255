@@ -116,6 +116,20 @@ export class ApplicationController {
   }
 
   // @RequiredRoles(RolesEnum.OPERATOR, RolesEnum.ADMIN)
+  @Delete('/delete-month/:yearmonth')
+  @ApiOperation({
+    summary: 'FRONCHILAR TEGMASIN !!!!!',
+    description: "Qoldirilgan Arizani o'chirish uchun",
+  })
+  @ApiBadRequestResponse()
+  @ApiNotFoundResponse()
+  @ApiNoContentResponse()
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async removeMonthApplication(@Param('yearmonth') yearMonth: string): Promise<void> {
+    await this.#_service.deleteMonth(yearMonth);
+  }
+
+  // @RequiredRoles(RolesEnum.OPERATOR, RolesEnum.ADMIN)
   @Get('/forsheet')
   @ApiOperation({
     summary: 'FRONCHILAR TEGMASIN !!!!!',

@@ -296,4 +296,59 @@ export class ApplicationService {
 
     return arrData;
   }
+
+  async deleteMonth(yearMonth: string) {
+    const methodName = this.delete;
+
+    try {
+      const findAll = await ApplicationEntity.find({
+        where: {
+          requested_date: yearMonth ? Like(`${yearMonth}%`) : undefined,
+        },
+        order: {
+          create_data: 'DESC',
+        },
+        select: {
+          id: true,
+          requested_date: true,
+          create_data: true,
+        },
+      });
+      console.log(findAll);
+      
+      if (!findAll.length) {
+        this.logger.debug(
+          `Method: ${methodName} - Application Not Found: `,
+          findAll,
+        );
+        throw new HttpException('Application not found', HttpStatus.NOT_FOUND);
+      }
+      for (let e of findAll) {
+        const deleteApplication: DeleteResult = await ApplicationEntity.delete({
+          id: e.id,
+        });
+        if (!deleteApplication.affected) {
+          this.logger.debug(
+            `Method: ${methodName} - Erorr Delete Application: `,
+            deleteApplication,
+          );
+          throw new HttpException(
+            'delete Erorr in Application',
+            HttpStatus.BAD_REQUEST,
+          );
+        }
+      }
+
+      return {
+        message: 'Application deleted successfully',
+        applications: findAll,
+      };
+    } catch (error) {
+      this.logger.debug(`Method: ${methodName} - Error: `, error);
+      throw new HttpException(
+        error.toString(),
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
 }
