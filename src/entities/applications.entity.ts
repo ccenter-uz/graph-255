@@ -39,6 +39,8 @@ export class ApplicationEntity extends BaseEntity {
     isHoliday: boolean;
     isToday: boolean;
     isCheckable: boolean;
+    customOffday: boolean | null;
+    isSelectLikeHoliday: boolean | null;
     label: number;
   }>;
 

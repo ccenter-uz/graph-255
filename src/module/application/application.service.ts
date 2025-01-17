@@ -278,7 +278,9 @@ export class ApplicationService {
           id: day.id,
           isWorkDay: day.isWorkDay,
           isNight: day.isNight,
-          label: day.label,
+          label: day?.label,
+          customOffday: day?.customOffday,
+          isSelectLikeHoliday: day?.isSelectLikeHoliday,
         });
       }
 
