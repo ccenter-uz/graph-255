@@ -256,7 +256,7 @@ export class ApplicationService {
   }
 
   async getApplicationForSheets(query: SheetApplicationDto) {
-    console.log(query);
+    // console.log(query);
     
     const findApplication = await ApplicationEntity.find({
       where: {
@@ -266,7 +266,7 @@ export class ApplicationService {
         agent_id: true,
       },
     });
-    console.log(findApplication , 'findApplication');
+    // console.log(findApplication , 'findApplication');
     if (!findApplication || findApplication == null) {
       throw new Error('application  not found');
     }
@@ -274,7 +274,7 @@ export class ApplicationService {
     let arrData = [];
 
     for (let application of findApplication) {
-    console.log(application.daysOfMonth, 'Application');
+    // console.log(application.daysOfMonth, 'Application');
 
       // let daysOfMonth = [];
       // for (let day of application?.daysOfMonth) {
