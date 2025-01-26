@@ -256,6 +256,8 @@ export class ApplicationService {
   }
 
   async getApplicationForSheets(query: SheetApplicationDto) {
+    console.log(query);
+    
     const findApplication = await ApplicationEntity.find({
       where: {
         requested_date: query.requested_date,
@@ -264,20 +266,34 @@ export class ApplicationService {
         agent_id: true,
       },
     });
-
+    console.log(findApplication , 'findApplication');
     if (!findApplication || findApplication == null) {
-      throw new Error('Agent not found');
+      throw new Error('application  not found');
     }
 
     let arrData = [];
 
     for (let application of findApplication) {
+    console.log(application.daysOfMonth, 'Application');
+
+      // let daysOfMonth = [];
+      // for (let day of application?.daysOfMonth) {
+      //   daysOfMonth.push({
+      //     id: day?.id,
+      //     isWorkDay: day?.isWorkDay,
+      //     isNight: day?.isNight,
+      //     label: day?.label,
+      //     customOffday: day?.customOffday,
+      //     isSelectLikeHoliday: day?.isSelectLikeHoliday,
+      //   });
+      // }
       let daysOfMonth = [];
-      for (let day of application.daysOfMonth) {
+      for (let i = 0; i < application?.daysOfMonth?.length; i++) {
+        const day = application.daysOfMonth[i];
         daysOfMonth.push({
-          id: day.id,
-          isWorkDay: day.isWorkDay,
-          isNight: day.isNight,
+          id: day?.id,
+          isWorkDay: day?.isWorkDay,
+          isNight: day?.isNight,
           label: day?.label,
           customOffday: day?.customOffday,
           isSelectLikeHoliday: day?.isSelectLikeHoliday,
@@ -285,13 +301,13 @@ export class ApplicationService {
       }
 
       const transformedData = {
-        fullName: application.agent_id.name,
-        workingHours: application.workingHours,
-        offDays: application.offDays,
+        fullName: application?.agent_id.name,
+        workingHours: application?.workingHours,
+        offDays: application?.offDays,
         daysOfMonth: daysOfMonth,
-        description: application.description,
-        requested_date: application.requested_date,
-        supervizorName: application.supervizorName,
+        description: application?.description,
+        requested_date: application?.requested_date,
+        supervizorName: application?.supervizorName,
       };
       arrData.push(transformedData);
     }
